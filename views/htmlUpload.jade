@@ -1,0 +1,15 @@
+doctype html5 
+html
+  head
+    title Loading data
+  body 
+    h1 Upload file
+    form(action="/api/upload/Stantions", method="post", enctype="multipart/form-data")
+        label File Stations
+        input(type="file", name="filedata")
+        input(type="submit", value="Send")
+
+    form(action="/api/upload/Travel", method="post", enctype="multipart/form-data")
+        label File Travel
+        input(type="file", name="filedata")
+        input(type="submit", value="Send")
