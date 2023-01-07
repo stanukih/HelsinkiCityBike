@@ -6,6 +6,8 @@ import { ReadLine } from 'readline';
 import { stantionModel } from "../models/Stantions";
 import { travelModel } from "../models/Travel";
 import lineReader = require('line-reader');
+import { errorModel } from '../models/ErrorLoad';
+
 
 async function saveBaseStantions(csv: String, index: Number, fileLoad:String) {
     if (index === 0) { return }
@@ -32,14 +34,36 @@ async function saveBaseStantions(csv: String, index: Number, fileLoad:String) {
         (isNaN(Number(data[10]))) ||
         (isNaN(Number(data[11]))) ||
         (isNaN(Number(data[12])))
-        
+
     ) {
+        try {
+            const errorLoad = new errorModel({
+                string_to_load: csv,
+                doctype: 'Stantion',
+                error: 'E01101112'
+            })
+            errorLoad.save()
+        }
+        catch (e) {
+            throw "Ecorrect"
+        }
         console.log("E01101112")
         return
-        
+
     }
     //const data = csv.split(',')
     if (data.length != 13) {
+        try {
+            const errorLoad = new errorModel({
+                string_to_load: csv,
+                doctype: 'Stantion',
+                error: 'E13'
+            })
+            errorLoad.save()
+        }
+        catch (e) {
+            throw "Ecorrect"
+        }
         console.log("E13")
         return        
     }
@@ -79,7 +103,7 @@ async function saveBaseStantions(csv: String, index: Number, fileLoad:String) {
 async function saveBaseTravel(csv: String, index: number, fileLoad:string) {
     if (index === 0) { return }
     const temp_data = csv.split('"')
-    let data: String[] = []
+    let data: string[] = []
     for (let i = 0; i < temp_data.length; i++) {
         if (i % 2 === 0) {
             let temp_data2 = temp_data[i].split(',')
@@ -95,23 +119,67 @@ async function saveBaseTravel(csv: String, index: number, fileLoad:string) {
 
         }
     }    
+    if (data.length != 8) {
+        try {
+            const errorLoad = new errorModel({
+                string_to_load: csv,
+                doctype: 'Travel',
+                error: 'E8'
+            })
+            errorLoad.save()
+        }
+        catch (e) {
+            throw "Ecorrect"
+        }
+        console.log("E8")
+        return        
+    }
     if (
         (isNaN(Number(data[2]))) ||
         (isNaN(Number(data[4]))) ||
         (isNaN(Number(data[6]))) ||
         (isNaN(Number(data[7])))       
     ) {
+        try {
+            const errorLoad = new errorModel({
+                string_to_load: csv,
+                doctype: 'Travel',
+                error: 'E01101112'
+            })
+            errorLoad.save()
+        }
+        catch (e) {
+            throw "Ecorrect"
+        }
         console.log("E01101112")
-        console.log("data", data)
         
         return
         
     }
-    //const data = csv.split(',')
-    if (data.length != 8) {
-        console.log("E8")
-        return        
+
+    if (
+        (isNaN(Date.parse(data[0]))) ||
+        (isNaN(Date.parse(data[1])))      
+    ) {
+        try {
+            const errorLoad = new errorModel({
+                string_to_load: csv,
+                doctype: 'Travel',
+                error: 'E01101112'
+            })
+            errorLoad.save()
+        }
+        catch (e) {
+            throw "Ecorrect"
+        }
+        console.log("E01101112")
+        
+        return
+        
     }
+
+
+    //const data = csv.split(',')   
 
     
     if ((Number(data[7])<10)||(Number(data[8])<10)){

@@ -40,10 +40,11 @@ exports.htmlUpload = exports.uploadTravel = exports.uploadStantions = void 0;
 var Stantions_1 = require("../models/Stantions");
 var Travel_1 = require("../models/Travel");
 var lineReader = require("line-reader");
+var ErrorLoad_1 = require("../models/ErrorLoad");
 function saveBaseStantions(csv, index, fileLoad) {
     var _a, _b, _c;
     return __awaiter(this, void 0, void 0, function () {
-        var temp_data, data, i, temp_data2, j, StantionSearch, Stantion;
+        var temp_data, data, i, temp_data2, j, errorLoad, errorLoad, StantionSearch, Stantion;
         return __generator(this, function (_d) {
             switch (_d.label) {
                 case 0:
@@ -70,11 +71,33 @@ function saveBaseStantions(csv, index, fileLoad) {
                         (isNaN(Number(data[10]))) ||
                         (isNaN(Number(data[11]))) ||
                         (isNaN(Number(data[12])))) {
+                        try {
+                            errorLoad = new ErrorLoad_1.errorModel({
+                                string_to_load: csv,
+                                doctype: 'Stantion',
+                                error: 'E01101112'
+                            });
+                            errorLoad.save();
+                        }
+                        catch (e) {
+                            throw "Ecorrect";
+                        }
                         console.log("E01101112");
                         return [2 /*return*/];
                     }
                     //const data = csv.split(',')
                     if (data.length != 13) {
+                        try {
+                            errorLoad = new ErrorLoad_1.errorModel({
+                                string_to_load: csv,
+                                doctype: 'Stantion',
+                                error: 'E13'
+                            });
+                            errorLoad.save();
+                        }
+                        catch (e) {
+                            throw "Ecorrect";
+                        }
                         console.log("E13");
                         return [2 /*return*/];
                     }
@@ -116,7 +139,7 @@ function saveBaseStantions(csv, index, fileLoad) {
 }
 function saveBaseTravel(csv, index, fileLoad) {
     return __awaiter(this, void 0, void 0, function () {
-        var temp_data, data, i, temp_data2, j, Travel;
+        var temp_data, data, i, temp_data2, j, errorLoad, errorLoad, errorLoad, Travel;
         return __generator(this, function (_a) {
             if (index === 0) {
                 return [2 /*return*/];
@@ -136,19 +159,56 @@ function saveBaseTravel(csv, index, fileLoad) {
                     data.push(temp_data[i]);
                 }
             }
+            if (data.length != 8) {
+                try {
+                    errorLoad = new ErrorLoad_1.errorModel({
+                        string_to_load: csv,
+                        doctype: 'Travel',
+                        error: 'E8'
+                    });
+                    errorLoad.save();
+                }
+                catch (e) {
+                    throw "Ecorrect";
+                }
+                console.log("E8");
+                return [2 /*return*/];
+            }
             if ((isNaN(Number(data[2]))) ||
                 (isNaN(Number(data[4]))) ||
                 (isNaN(Number(data[6]))) ||
                 (isNaN(Number(data[7])))) {
+                try {
+                    errorLoad = new ErrorLoad_1.errorModel({
+                        string_to_load: csv,
+                        doctype: 'Travel',
+                        error: 'E01101112'
+                    });
+                    errorLoad.save();
+                }
+                catch (e) {
+                    throw "Ecorrect";
+                }
                 console.log("E01101112");
-                console.log("data", data);
                 return [2 /*return*/];
             }
-            //const data = csv.split(',')
-            if (data.length != 8) {
-                console.log("E8");
+            if ((isNaN(Date.parse(data[0]))) ||
+                (isNaN(Date.parse(data[1])))) {
+                try {
+                    errorLoad = new ErrorLoad_1.errorModel({
+                        string_to_load: csv,
+                        doctype: 'Travel',
+                        error: 'E01101112'
+                    });
+                    errorLoad.save();
+                }
+                catch (e) {
+                    throw "Ecorrect";
+                }
+                console.log("E01101112");
                 return [2 /*return*/];
             }
+            //const data = csv.split(',')   
             if ((Number(data[7]) < 10) || (Number(data[8]) < 10)) {
                 console.log("E10");
             }
