@@ -13,18 +13,14 @@ const storage = multer.diskStorage({
     }
 })
 
-const fileFilter = (req, file, cb) => {
-    if (file.mimetype === 'text/csv'){
-        cb(null,true)
-    } else {
-        cb(null, false)
-    }
-}
 
-const optionsMulter={
+const upload = multer({
     storage:storage, 
-    fileFilter:fileFilter, 
-    fileSize:setings.limits_file_upload
-}
-const upload = multer({ storage });
+    fileFilter:(req, file, cb)=> {
+        if (file.mimetype === 'text/csv'){
+            cb(null, true)
+            }
+        else {cb(null, false)}},
+        limits:{fileSize:setings.limits_file_upload}
+});
 export{upload}

@@ -156,10 +156,10 @@ async function saveBaseTravel(csv: String, index: number, fileLoad:string) {
 }
 
 
-function uploadStantions(req, res) {
-    if (req.file.path.slice(-4)!=".csv"){
+async function uploadStantions(req, res) {
+    if (!(req.file)){
         res.status(409).json({
-            message: "Error"
+            message: "File upload error. The file must be less than 300 megabytes and have *.csv extension"
         })
         return
     }

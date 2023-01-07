@@ -14,18 +14,16 @@ var storage = multer.diskStorage({
         //cb(null, 'test')
     }
 });
-var fileFilter = function (req, file, cb) {
-    if (file.mimetype === 'text/csv') {
-        cb(null, true);
-    }
-    else {
-        cb(null, false);
-    }
-};
-var optionsMulter = {
+var upload = multer({
     storage: storage,
-    fileFilter: fileFilter,
-    fileSize: keys_1.setings.limits_file_upload
-};
-var upload = multer({ storage: storage });
+    fileFilter: function (req, file, cb) {
+        if (file.mimetype === 'text/csv') {
+            cb(null, true);
+        }
+        else {
+            cb(null, false);
+        }
+    },
+    limits: { fileSize: keys_1.setings.limits_file_upload }
+});
 exports.upload = upload;

@@ -192,26 +192,32 @@ function saveBaseTravel(csv, index, fileLoad) {
     });
 }
 function uploadStantions(req, res) {
-    if (req.file.path.slice(-4) != ".csv") {
-        res.status(409).json({
-            message: "Error"
-        });
-        return;
-    }
-    var index = 0;
-    lineReader.eachLine("./".concat(req.file.path), function (line) {
-        try {
-            saveBaseStantions(line, index, req.file.path);
-        }
-        catch (e) {
-            res.status(409).json({
-                message: "File filling error"
+    return __awaiter(this, void 0, void 0, function () {
+        var index;
+        return __generator(this, function (_a) {
+            if (!(req.file)) {
+                res.status(409).json({
+                    message: "File upload error. The file must be less than 300 megabytes and have *.csv extension"
+                });
+                return [2 /*return*/];
+            }
+            index = 0;
+            lineReader.eachLine("./".concat(req.file.path), function (line) {
+                try {
+                    saveBaseStantions(line, index, req.file.path);
+                }
+                catch (e) {
+                    res.status(409).json({
+                        message: "File filling error"
+                    });
+                }
+                index++;
             });
-        }
-        index++;
-    });
-    res.status(200).json({
-        message: "Data load"
+            res.status(200).json({
+                message: "Data load"
+            });
+            return [2 /*return*/];
+        });
     });
 }
 exports.uploadStantions = uploadStantions;
