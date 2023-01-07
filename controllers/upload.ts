@@ -40,7 +40,8 @@ async function saveBaseStantions(csv: String, index: Number, fileLoad:String) {
             const errorLoad = new errorModel({
                 string_to_load: csv,
                 doctype: 'Stantion',
-                error: 'E01101112'
+                error: 'E01101112',
+                fileLoad:fileLoad
             })
             errorLoad.save()
         }
@@ -57,7 +58,8 @@ async function saveBaseStantions(csv: String, index: Number, fileLoad:String) {
             const errorLoad = new errorModel({
                 string_to_load: csv,
                 doctype: 'Stantion',
-                error: 'E13'
+                error: 'E13',
+                fileLoad:fileLoad
             })
             errorLoad.save()
         }
@@ -144,7 +146,8 @@ async function saveBaseTravel(csv: String, index: number, fileLoad:string) {
             const errorLoad = new errorModel({
                 string_to_load: csv,
                 doctype: 'Travel',
-                error: 'E01101112'
+                error: 'E01101112',
+                fileLoad:fileLoad
             })
             errorLoad.save()
         }
@@ -165,7 +168,8 @@ async function saveBaseTravel(csv: String, index: number, fileLoad:string) {
             const errorLoad = new errorModel({
                 string_to_load: csv,
                 doctype: 'Travel',
-                error: 'E01101112'
+                error: 'E01101112',
+                fileLoad:fileLoad
             })
             errorLoad.save()
         }

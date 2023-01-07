@@ -15,6 +15,10 @@ var ErrorShema = new Shema({
     error: {
         type: String,
         required: true
+    },
+    fileload: {
+        type: String,
+        required: true
     }
 });
 var errorModel = mongoose.model('errors', ErrorShema);

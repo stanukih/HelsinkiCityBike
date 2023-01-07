@@ -75,7 +75,8 @@ function saveBaseStantions(csv, index, fileLoad) {
                             errorLoad = new ErrorLoad_1.errorModel({
                                 string_to_load: csv,
                                 doctype: 'Stantion',
-                                error: 'E01101112'
+                                error: 'E01101112',
+                                fileLoad: fileLoad
                             });
                             errorLoad.save();
                         }
@@ -91,7 +92,8 @@ function saveBaseStantions(csv, index, fileLoad) {
                             errorLoad = new ErrorLoad_1.errorModel({
                                 string_to_load: csv,
                                 doctype: 'Stantion',
-                                error: 'E13'
+                                error: 'E13',
+                                fileLoad: fileLoad
                             });
                             errorLoad.save();
                         }
@@ -182,7 +184,8 @@ function saveBaseTravel(csv, index, fileLoad) {
                     errorLoad = new ErrorLoad_1.errorModel({
                         string_to_load: csv,
                         doctype: 'Travel',
-                        error: 'E01101112'
+                        error: 'E01101112',
+                        fileLoad: fileLoad
                     });
                     errorLoad.save();
                 }
@@ -198,7 +201,8 @@ function saveBaseTravel(csv, index, fileLoad) {
                     errorLoad = new ErrorLoad_1.errorModel({
                         string_to_load: csv,
                         doctype: 'Travel',
-                        error: 'E01101112'
+                        error: 'E01101112',
+                        fileLoad: fileLoad
                     });
                     errorLoad.save();
                 }
