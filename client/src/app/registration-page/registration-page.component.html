@@ -1,19 +1,18 @@
-<div class="card-body">
-    <h2 class="card-title">Registration</h2>
-    <div class="input-field">
-      <label>Email</label>
-      <input id="email" type="email">
-    </div>
-    <div class="input-field">
-      <label>Password</label>
-      <input id="password" type="password">
-    </div>
-    <div class="input-field">
-        <label>Admin key</label>
-        <p class="card-text">Leave this field empty</p>
-        <input id="admin" type="text" value="delete this text">
-      </div>
-    <br>
-    <a href="#" class="btn btn-primary">Registration</a>
-
+<form class="card-body" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h2 class="card-title">Registration</h2>
+  <div class="input-field">
+    <label>Email</label>
+    <input formControlName="email" id="email" type="email">
   </div>
+  <div class="input-field">
+    <label>Password</label>
+    <input formControlName="password" id="password" type="password">
+  </div>
+  <div class="input-field">
+    <label>Admin key</label>
+    <p class="card-text">Leave this field empty</p>
+    <input formControlName="admin" id="admin" type="text" value="delete this text">
+  </div>
+  <br>
+  <button [disabled]="form.invalid || form.disabled" class="btn btn-primary" type="submit">Registration</button>
+</form>

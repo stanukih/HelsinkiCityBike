@@ -7,6 +7,10 @@ import { AuthLayoutComponent } from './shared/layouts/auth-layout/auth-layout.co
 import { LoginPageComponent } from './login-page/login-page.component';
 import { BasicLayoutComponent } from './shared/layouts/basic-layout/basic-layout.component';
 import { RegistrationPageComponent } from './registration-page/registration-page.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http'
+import { TokenInterseptor } from './shared/classes/token.interseptor';
 
 @NgModule({
   declarations: [
@@ -17,10 +21,18 @@ import { RegistrationPageComponent } from './registration-page/registration-page
     RegistrationPageComponent
   ],
   imports: [
+    RouterModule,
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    multi:true,
+    useClass:TokenInterseptor
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
