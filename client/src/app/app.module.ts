@@ -11,6 +11,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http'
 import { TokenInterseptor } from './shared/classes/token.interseptor';
+import { StationsPageComponent } from './stations-page/stations-page.component';
+import { TravelPageComponent } from './travel-page/travel-page.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { TokenInterseptor } from './shared/classes/token.interseptor';
     AuthLayoutComponent,
     LoginPageComponent,
     BasicLayoutComponent,
-    RegistrationPageComponent
+    RegistrationPageComponent,
+    StationsPageComponent,
+    TravelPageComponent
   ],
   imports: [
     RouterModule,

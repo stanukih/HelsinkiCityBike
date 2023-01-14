@@ -6,6 +6,8 @@ import { RegistrationPageComponent } from './registration-page/registration-page
 import { AuthGuard } from './shared/classes/auth.guard';
 import { AuthLayoutComponent } from './shared/layouts/auth-layout/auth-layout.component';
 import { BasicLayoutComponent } from './shared/layouts/basic-layout/basic-layout.component';
+import { StationsPageComponent } from './stations-page/stations-page.component';
+import { TravelPageComponent } from './travel-page/travel-page.component';
 
 const routes: Routes = [
   {
@@ -22,7 +24,12 @@ const routes: Routes = [
     ]
   },
   {
-    path: "", component: BasicLayoutComponent,canActivate:[AuthGuard], children:[
+    path: "", component: BasicLayoutComponent,canActivate:[AuthGuard], children:[{
+      path: "stantion", component: StationsPageComponent
+    },
+    {
+      path:"travel", component: TravelPageComponent
+    }
     ]
   }
 ];
