@@ -13,9 +13,18 @@ import {HttpClientModule, HTTP_INTERCEPTORS} from '@angular/common/http'
 import { TokenInterseptor } from './shared/classes/token.interseptor';
 import { StationsPageComponent } from './stations-page/stations-page.component';
 import { TravelPageComponent } from './travel-page/travel-page.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatMenuModule} from '@angular/material/menu';
+import {MatTableModule} from '@angular/material/table';
+import {MatPaginatorModule} from '@angular/material/paginator'
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSelectModule } from '@angular/material/select';
+
+
 
 @NgModule({
   declarations: [
+    
     AppComponent,
     AuthLayoutComponent,
     LoginPageComponent,
@@ -25,12 +34,17 @@ import { TravelPageComponent } from './travel-page/travel-page.component';
     TravelPageComponent
   ],
   imports: [
+    MatSelectModule,
+    MatPaginatorModule,
+    MatTableModule,
+    MatMenuModule,
     RouterModule,
     BrowserModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    BrowserAnimationsModule
   ],
   providers: [{
     provide: HTTP_INTERCEPTORS,
