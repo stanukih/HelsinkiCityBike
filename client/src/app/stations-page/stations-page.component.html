@@ -1,7 +1,19 @@
 
 <br>
 <table>
-<tr>
+  
+  <tr>
+    <th>
+      <p>Select required fields</p>
+    <mat-form-field appearance="fill" role="listbox" >
+      <mat-label>select required fields</mat-label>
+      <mat-select [(value)]="selectedFieldToReq" multiple>
+        <mat-option *ngFor="let field of sortFields" [value]="field.value">
+          {{field.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    </th>
   <th>
   <p>Select fields to sort</p>
 <mat-form-field appearance="fill">
@@ -27,7 +39,7 @@
 </mat-form-field>
 </th>
 <th>
-  <p>Select math operation from filter</p>
+  <p>Select math operation</p>
 <mat-form-field appearance="fill">
   <mat-label>select math operation</mat-label>
     <mat-select [(value)]="selectedOperatorField">
@@ -38,6 +50,8 @@
     </mat-select>
 </mat-form-field>
 </th>
+
+
 <th>
   <input matInput type="text" [(ngModel)]="filterInput">
 </th>

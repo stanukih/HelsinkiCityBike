@@ -84,14 +84,63 @@ function parseFilter(FilterString) {
             filter_end = "{}";
             break;
     }
-    console.log("req.query.filter", FilterString);
-    console.log("filter_end", filter_end);
-    console.log("filter", filter_end);
     return filter_end;
+}
+function parseFields(FieldsString) {
+    var fields_end = '';
+    if (FieldsString.length === 0) {
+        return "{_id:0, fileLoad:0, __v:0}";
+    }
+    for (var index = 0; index < FieldsString.length; index++) {
+        fields_end += ', ';
+        console.log(FieldsString[index]);
+        switch (FieldsString[index]) {
+            case "0":
+                fields_end += "\"fid\":0";
+                break;
+            case "1":
+                fields_end += "\"id\":0";
+                break;
+            case "2":
+                fields_end += "\"nimi\": 0";
+                break;
+            case "3":
+                fields_end += "\"namn\": 0";
+                break;
+            case "4":
+                fields_end += "\"name\": 0";
+                break;
+            case "5":
+                fields_end += "\"osoite\":0";
+                break;
+            case "6":
+                fields_end += "\"adress\":0";
+                break;
+            case "7":
+                fields_end += "\"kaupunki\":0";
+                break;
+            case "8":
+                fields_end += "\"stad\":0";
+                break;
+            case "9":
+                fields_end += "\"operaattor\":0";
+                break;
+            case "A":
+                fields_end += "\"kapasiteet\":0";
+                break;
+            case "B":
+                fields_end += "\"positionX\":0";
+                break;
+            case "C":
+                fields_end += "\"positionY\":0";
+                break;
+        }
+    }
+    return "{\"_id\":0, \"fileLoad\":0, \"__v\":0" + fields_end + "}";
 }
 function receiving_stations(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var page, size, sort, filter, dataStantion, e_1;
+        var page, size, sort, filter, fields, dataStantion, e_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -100,6 +149,7 @@ function receiving_stations(req, res) {
                     size = 100;
                     sort = "_id";
                     filter = void 0;
+                    fields = void 0;
                     if (req.query.page != '') {
                         page = req.query.page;
                     }
@@ -112,7 +162,11 @@ function receiving_stations(req, res) {
                     if (req.query.filter != '') {
                         filter = JSON.parse(parseFilter(req.query.filter));
                     }
-                    return [4 /*yield*/, Stantions_1.stantionModel.find(filter, { _id: 0, fileLoad: 0, __v: 0 }).sort(sort).skip((page - 1) * size).limit(size)];
+                    if (req.query.fields != '') {
+                        console.log(parseFields(req.query.fields));
+                        fields = JSON.parse(parseFields(req.query.fields));
+                    }
+                    return [4 /*yield*/, Stantions_1.stantionModel.find(filter, fields).sort(sort).skip((page - 1) * size).limit(size)];
                 case 1:
                     dataStantion = _a.sent();
                     res.status(200).json(dataStantion);

@@ -11,8 +11,8 @@ export class StantionService {
 
     }
 
-    fetch(page:number=1, size:number=100, sort:string='', filter:string=''):Observable<Stantion[]>{
-        return this.http.get<Stantion[]>(`/api/stantion/stantion?page=${page}&size=${size}&sort=${sort}&filter=${filter}`)
+    fetch(page:number=1, size:number=100, sort:string='', filter:string='',fields:string=''):Observable<Stantion[]>{
+        return this.http.get<Stantion[]>(`/api/stantion/stantion?page=${page}&size=${size}&sort=${sort}&filter=${filter}&fields=${fields}`)
     }
     stantion_quantity(filter:string=''):Observable<number>{
         return this.http.get<number>(`/api/stantion/stantion_quantity?filter=${filter}`)

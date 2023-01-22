@@ -51,15 +51,16 @@ export class StationsPageComponent implements OnInit{
   }
 
   sortFields:ISortField[]
-  dataSource!:Stantion[]
+  dataSource:Stantion[]=[]
   pageEvent!: PageEvent;
-  pageIndex!:number
-  length!: number
-  pageSize!: number
+  pageIndex:number=0
+  length: number=0
+  pageSize: number=0
   pageSizeOptions!: number[]
   selectedSortField!:string
   selectedFilterField!:string
   selectedOperatorField!:string
+  selectedFieldToReq:string[]=[]
   operator:ISortField[]
   filterInput!:string
   subs!:Subscription
@@ -68,12 +69,14 @@ export class StationsPageComponent implements OnInit{
   onPaginate(pageEvent: PageEvent) {    
     this.pageIndex=pageEvent.pageIndex
     this.pageSize = pageEvent.pageSize;
-    this.stantionService.fetch(this.pageIndex+1,this.pageSize).subscribe(stantion =>{      
+    /*this.stantionService.fetch(this.pageIndex+1,this.pageSize).subscribe(stantion =>{      
       this.dataSource=stantion
-    })
+    })*/
+    this.loadData()
   }
   
   loadData():void{
+    this.displayedColumns=this.selectedFieldToReq
     let filter:string
     if ((this.selectedFilterField)&& (this.selectedOperatorField)&&(this.filterInput)){
       filter=''.concat(this.selectedFilterField,"_", this.selectedOperatorField,"_",this.filterInput)}
@@ -86,7 +89,8 @@ export class StationsPageComponent implements OnInit{
       
     })
     this.subs.unsubscribe
-    this.subs=this.stantionService.fetch(this.pageIndex+1,this.pageSize,this.selectedSortField,filter).subscribe(
+    this.subs=this.stantionService.fetch(this.pageIndex+1,this.pageSize,this.selectedSortField,filter,this.createParamFieldsToReq(this.selectedFieldToReq)).subscribe(
+      
       stantion =>{      
       this.dataSource=stantion
     },
@@ -95,7 +99,6 @@ export class StationsPageComponent implements OnInit{
     }
     )
     this.subs.unsubscribe
-
   }
 
 
@@ -103,7 +106,32 @@ export class StationsPageComponent implements OnInit{
     
   }
 
-  
+  createParamFieldsToReq(selectedFieldToReq:string[]):string {
+    if (selectedFieldToReq.length<1)    {
+      return ''
+    }
+    let ParamFieldsToReq:string='' 
+    for (let index = 0; index < this.displayedColumns.length; index++) {
+
+      if (!(selectedFieldToReq.includes(this.displayedColumns[index]))) {
+        switch (index) {
+          case 10:
+            ParamFieldsToReq += 'A';
+            break;
+          case 11:
+            ParamFieldsToReq += 'B';
+            break;
+          case 12:
+            ParamFieldsToReq += 'C';
+            break;
+          default:
+            ParamFieldsToReq += String(index);
+            break;
+        }
+      }
+    }    
+    return ParamFieldsToReq
+  }  
 
   displayedColumns: string[] = [
     "fid",
