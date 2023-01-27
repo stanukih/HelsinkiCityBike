@@ -1,0 +1,123 @@
+<br>
+
+<table>
+  <tr>
+    <th>
+      <p>
+        <mat-form-field appearance="fill">
+          <label>Fid</label>
+          <input type="number" matInput placeholder="Fid by record" [(ngModel)]="dataToAddStantion.fid">
+        </mat-form-field>
+
+      </p>
+    </th>
+    <th>
+      <p>
+        <mat-form-field appearance="fill">
+          <label>Id</label>
+          <input type="number" matInput placeholder="Id by record" [(ngModel)]="dataToAddStantion.id">
+        </mat-form-field>
+      </p>
+    </th>
+  </tr>
+  <tr>
+    <th>
+      <p>
+        <mat-form-field appearance="fill">
+          <label>nimi</label>
+          <input matInput placeholder="Nimi by record" [(ngModel)]="dataToAddStantion.nimi">
+        </mat-form-field>
+      </p>
+    </th>
+    <th>
+      <p>
+        <mat-form-field appearance="fill">
+          <label>namn</label>
+          <input matInput placeholder="namn by record" [(ngModel)]="dataToAddStantion.namn">
+        </mat-form-field>
+      </p>
+    </th>
+    <th>
+      <p>
+        <mat-form-field appearance="fill">
+          <label>name</label>
+          <input matInput placeholder="name by record" [(ngModel)]="dataToAddStantion.name">
+        </mat-form-field>
+      </p>
+    </th>
+  </tr>
+  <tr>
+    <th>
+      <p>
+        <mat-form-field appearance="fill">
+          <label>osoite</label>
+          <input matInput placeholder="osoite by record" [(ngModel)]="dataToAddStantion.osoite">
+        </mat-form-field>
+      </p>
+    </th>
+    <th>
+      <p>
+        <mat-form-field appearance="fill">
+          <label>adress</label>
+          <input matInput placeholder="adress by record" [(ngModel)]="dataToAddStantion.adress">
+        </mat-form-field>
+      </p>
+    </th>
+    <th>
+      <p>
+        <mat-form-field appearance="fill">
+          <label>kaupunki</label>
+          <input matInput placeholder="kaupunki by record" [(ngModel)]="dataToAddStantion.kaupunki">
+        </mat-form-field>
+      </p>
+    </th>
+  </tr>
+
+  <tr>
+  <tr>
+    <th>
+      <p>
+        <mat-form-field appearance="fill">
+          <label>stad</label>
+          <input matInput placeholder="stad by record" [(ngModel)]="dataToAddStantion.stad">
+        </mat-form-field>
+      </p>
+    </th>
+    <th>
+      <p>
+        <mat-form-field appearance="fill">
+          <label>operaattor</label>
+          <input matInput placeholder="operaattor by record" [(ngModel)]="dataToAddStantion.operaattor">
+        </mat-form-field>
+      </p>
+    </th>
+    <th>
+      <p>
+        <mat-form-field appearance="fill">
+          <label>kapasiteet</label>
+          <input type="number" matInput placeholder="kapasiteet by record" [(ngModel)]="dataToAddStantion.kapasiteet">
+        </mat-form-field>
+      </p>
+    </th>
+  </tr>
+  <th>
+
+    <p>
+      <mat-form-field appearance="fill">
+        <label>positionX</label>
+        <input type="number" matInput placeholder="positionX by record" [(ngModel)]="dataToAddStantion.positionX">
+      </mat-form-field>
+    </p>
+  </th>
+  <th>
+    <p>
+      <mat-form-field appearance="fill">
+        <label>positionY</label>
+        <input type="number" matInput placeholder="positionY by record" [(ngModel)]="dataToAddStantion.positionY">
+      </mat-form-field>
+    </p>
+  </th>
+  <th>
+    <button (click)="addStantion()">Basic</button>
+  </th>
+</table>

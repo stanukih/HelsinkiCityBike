@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.receiving_stations_quantity = exports.receiving_stations = void 0;
+exports.saveBaseStantions = exports.receiving_stations_quantity = exports.receiving_stations = void 0;
 //const multer  = require("multer");
 //const upload = multer({dest:"uploads"})
 var Stantions_1 = require("../models/Stantions");
@@ -221,3 +221,79 @@ function receiving_stations_quantity(req, res) {
     });
 }
 exports.receiving_stations_quantity = receiving_stations_quantity;
+//interface 
+function saveBaseStantions(req, res) {
+    return __awaiter(this, void 0, void 0, function () {
+        var dataStantionount, stantion, e_3;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if ((!(req.body.fid)) || (isNaN(Number(req.body.fid))) ||
+                        (!(req.body.id)) || (isNaN(Number(req.body.id))) ||
+                        (!(req.body.nimi)) || ((req.body.nimi === "")) ||
+                        (!(req.body.namn)) || ((req.body.namn === "")) ||
+                        (!(req.body.name)) || ((req.body.name === "")) ||
+                        (!(req.body.osoite)) || ((req.body.osoite === "")) ||
+                        (!(req.body.adress)) || ((req.body.adress === "")) ||
+                        (!(req.body.kapasiteet)) || (isNaN(Number(req.body.kapasiteet))) ||
+                        (!(req.body.positionX)) || (isNaN(Number(req.body.positionX))) ||
+                        (!(req.body.positionY)) || (isNaN(Number(req.body.positionY)))) {
+                        res.status(400).json({
+                            status_add: "failed",
+                            codeFailed: 1015,
+                            message: "Not all required fields are present in the request"
+                        });
+                        return [2 /*return*/];
+                    }
+                    return [4 /*yield*/, Stantions_1.stantionModel.findOne({ $or: [{ fid: req.body.fid }, { id: req.body.id }] })];
+                case 1:
+                    dataStantionount = _a.sent();
+                    if (!dataStantionount) return [3 /*break*/, 2];
+                    res.status(400).json({
+                        status_add: "failed",
+                        codeFailed: 1020,
+                        message: "Record creation error. Record conflict",
+                        record: dataStantionount
+                    });
+                    return [2 /*return*/];
+                case 2:
+                    _a.trys.push([2, 4, , 5]);
+                    console.log(req.body);
+                    stantion = new Stantions_1.stantionModel({
+                        fid: req.body.fid,
+                        id: req.body.id,
+                        nimi: req.body.nimi,
+                        namn: req.body.namn,
+                        name: req.body.name,
+                        osoite: req.body.osoite,
+                        adress: req.body.adress,
+                        kaupunki: req.body.kaupunki ? req.body.kaupunki : null,
+                        stad: req.body.stad ? req.body.stad : null,
+                        operaattor: req.body.operaattor ? req.body.operaattor : null,
+                        kapasiteet: req.body.kapasiteet,
+                        positionX: req.body.positionX,
+                        positionY: req.body.positionY
+                    });
+                    console.log("---------3");
+                    return [4 /*yield*/, stantion.save()];
+                case 3:
+                    _a.sent();
+                    res.status(200).json({
+                        status_add: "success"
+                    });
+                    return [2 /*return*/];
+                case 4:
+                    e_3 = _a.sent();
+                    console.log(e_3);
+                    res.status(400).json({
+                        status_add: "failed",
+                        codeFailed: 1100,
+                        message: "Record creation error."
+                    });
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.saveBaseStantions = saveBaseStantions;

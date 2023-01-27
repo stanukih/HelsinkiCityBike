@@ -212,28 +212,9 @@ function saveBaseTravel(csv, index, fileLoad) {
                 console.log("E01101112");
                 return [2 /*return*/];
             }
-            //const data = csv.split(',')   
             if ((Number(data[7]) < 10) || (Number(data[8]) < 10)) {
                 console.log("E10");
             }
-            /*Ability to store mongo id*/
-            /*
-            const StantionSearch1 = await stantionModel.findOne({
-                id:data[2]
-            })
-            if (!(StantionSearch1)){
-                console.log("ESN1")
-                console.log("data", data)
-                return
-            }
-            const StantionSearch2 = await stantionModel.findOne({
-                id:data[2]
-            })
-            if (!(StantionSearch2)){
-                console.log("ESN2")
-                console.log("data", data)
-                return
-            }*/
             try {
                 Travel = new Travel_1.travelModel({
                     departure_time: data[0],

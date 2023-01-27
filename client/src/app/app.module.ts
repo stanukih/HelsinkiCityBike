@@ -17,8 +17,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatMenuModule} from '@angular/material/menu';
 import {MatTableModule} from '@angular/material/table';
 import {MatPaginatorModule} from '@angular/material/paginator'
-import { MatPaginator } from '@angular/material/paginator';
+//import { MatPaginator } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
+import { StantionAddPageComponent } from './stantion-add-page/stantion-add-page.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input'
+//import { MatHint } from '@angular/material/form-field';
+//import { MatLabel } from '@angular/material/form-field';
 
 
 
@@ -31,9 +36,12 @@ import { MatSelectModule } from '@angular/material/select';
     BasicLayoutComponent,
     RegistrationPageComponent,
     StationsPageComponent,
-    TravelPageComponent
+    TravelPageComponent,
+    StantionAddPageComponent
   ],
   imports: [
+    MatInputModule,
+    MatFormFieldModule,
     MatSelectModule,
     MatPaginatorModule,
     MatTableModule,

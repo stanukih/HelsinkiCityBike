@@ -3,6 +3,31 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { Stantion } from "./interfaces";
 
+
+export interface stantionminimal{
+    fid:number,
+    id:number,
+    nimi:string,
+    namn:string,
+    name:string,
+    osoite:string,
+    adress:string,
+    kaupunki?:string,
+    stad?:string,
+    operaattor?:string,
+    kapasiteet:number,
+    positionX:number,
+    positionY:number
+}
+
+export interface resJSON{
+    status_add:string,
+    codeFailed?:Number,
+    message?:string,
+    record?:JSON
+}
+
+
 @Injectable({
     providedIn:'root'
 })
@@ -16,6 +41,10 @@ export class StantionService {
     }
     stantion_quantity(filter:string=''):Observable<number>{
         return this.http.get<number>(`/api/stantion/stantion_quantity?filter=${filter}`)
+    }
+
+    stantion_add(data:stantionminimal){
+        return this.http.post<resJSON>(`/api/stantion/add_stantion_one`,data)
     }
     
 }

@@ -8,6 +8,7 @@ import { AuthLayoutComponent } from './shared/layouts/auth-layout/auth-layout.co
 import { BasicLayoutComponent } from './shared/layouts/basic-layout/basic-layout.component';
 import { StationsPageComponent } from './stations-page/stations-page.component';
 import { TravelPageComponent } from './travel-page/travel-page.component';
+import { StantionAddPageComponent } from './stantion-add-page/stantion-add-page.component';
 
 const routes: Routes = [
   {
@@ -24,11 +25,15 @@ const routes: Routes = [
     ]
   },
   {
-    path: "", component: BasicLayoutComponent,canActivate:[AuthGuard], children:[{
+    path: "", component: BasicLayoutComponent,canActivate:[AuthGuard], children:[
+    {
       path: "stantion", component: StationsPageComponent
     },
     {
       path:"travel", component: TravelPageComponent
+    },
+    {
+      path: "stantion_add", component: StantionAddPageComponent
     }
     ]
   }
