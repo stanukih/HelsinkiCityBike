@@ -14,6 +14,7 @@ import * as passport from 'passport'
 import {passportfun} from './middleware/passport'
 import path = require("path");
 import { stantionRouter } from './routes/stantion'
+import { travelRouter } from './routes/travel'
 
 
 app.set('views', path.join(__dirname, 'views'));
@@ -29,6 +30,7 @@ app.use(morgan('dev'))
 app.use(cors())
 app.use('/api/upload',uploadRouter)
 app.use('/api/stantion',stantionRouter)
+app.use('/api/travel',travelRouter)
 app.use('/api/auth',authRouter)
 
 

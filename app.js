@@ -17,6 +17,7 @@ var passport = require("passport");
 var passport_1 = require("./middleware/passport");
 var path = require("path");
 var stantion_1 = require("./routes/stantion");
+var travel_1 = require("./routes/travel");
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(passport.initialize());
@@ -29,6 +30,7 @@ app.use(morgan('dev'));
 app.use(cors());
 app.use('/api/upload', upload_1.uploadRouter);
 app.use('/api/stantion', stantion_1.stantionRouter);
+app.use('/api/travel', travel_1.travelRouter);
 app.use('/api/auth', auth_1.authRouter);
 mongoose_1["default"].connect(keys_1.setings.mongoURI)
     .then(function () { return console.log('mongodb connect'); })["catch"](function (error) { return console.log(error); });

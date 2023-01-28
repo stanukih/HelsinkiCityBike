@@ -19,6 +19,7 @@ interface ISortField {
 })
 export class StationsPageComponent implements OnInit{
   constructor(private stantionService:StantionService){
+    this.showFirstLastButtons = true
     this.length=0
     this.pageSize=25
     this.pageSizeOptions=[25, 50, 100]
@@ -64,6 +65,7 @@ export class StationsPageComponent implements OnInit{
   operator:ISortField[]
   filterInput!:string
   subs!:Subscription
+  showFirstLastButtons:boolean
   
   
   onPaginate(pageEvent: PageEvent) {    
@@ -133,7 +135,9 @@ export class StationsPageComponent implements OnInit{
     return ParamFieldsToReq
   }  
 
-  displayedColumns: string[] = [
+  displayedColumns: string[] = []
+  
+  fieldsInTheTable:string[]= [
     "fid",
   "id",
   "nimi",

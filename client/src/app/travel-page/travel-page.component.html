@@ -1,1 +1,118 @@
-<p>travel-page works!</p>
+
+<br>
+<table>
+  
+  <tr>
+    <th>
+      <p>Select required fields</p>
+    <mat-form-field appearance="fill" role="listbox" >
+      <mat-label>select required fields</mat-label>
+      <mat-select [(value)]="selectedFieldToReq" multiple>
+        <mat-option *ngFor="let field of sortFields" [value]="field.value">
+          {{field.viewValue}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    </th>
+  <th>
+  <p>Select fields to sort</p>
+<mat-form-field appearance="fill">
+  <mat-label>select fields to sort</mat-label>
+    <mat-select [(value)]="selectedSortField">
+      <mat-option value="" selected></mat-option>
+      <mat-option *ngFor="let field of sortFields" [value]="field.value">
+        {{field.viewValue}}
+      </mat-option>
+    </mat-select>
+</mat-form-field>
+</th>
+<th>
+  <p>Select fields to filter</p>
+<mat-form-field appearance="fill">
+  <mat-label>select fields to filter</mat-label>
+    <mat-select [(value)]="selectedFilterField">
+      <mat-option value="" selected></mat-option>
+      <mat-option *ngFor="let field of sortFields" [value]="field.value">
+        {{field.viewValue}}
+      </mat-option>
+    </mat-select>
+</mat-form-field>
+</th>
+<th>
+  <p>Select math operation</p>
+<mat-form-field appearance="fill">
+  <mat-label>select math operation</mat-label>
+    <mat-select [(value)]="selectedOperatorField">
+      <mat-option value="" selected></mat-option>
+      <mat-option *ngFor="let field of operator" [value]="field.value">
+        {{field.viewValue}}
+      </mat-option>
+    </mat-select>
+</mat-form-field>
+</th>
+
+
+<th>
+  <input matInput type="text" [(ngModel)]="filterInput">
+</th>
+<th>
+  <button mat-button color="primary" (click)="loadData()">Update</button>
+</th>
+</table>
+<br>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <ng-container matColumnDef="departure_time">
+        <th mat-header-cell *matHeaderCellDef> departure_time. </th>
+        <td mat-cell *matCellDef="let element"> {{element.departure_time}} </td>
+      </ng-container>
+      
+      <ng-container matColumnDef="return_time">
+        <th mat-header-cell *matHeaderCellDef> return_time. </th>
+        <td mat-cell *matCellDef="let element"> {{element.return_time}} </td>
+      </ng-container>
+      
+      <ng-container matColumnDef="departure_station_id">
+        <th mat-header-cell *matHeaderCellDef> departure_station_id. </th>
+        <td mat-cell *matCellDef="let element"> {{element.departure_station_id}} </td>
+      </ng-container>
+      
+      <ng-container matColumnDef="departure_station_name">
+        <th mat-header-cell *matHeaderCellDef> departure_station_name. </th>
+        <td mat-cell *matCellDef="let element"> {{element.departure_station_name}} </td>
+      </ng-container>
+      
+      <ng-container matColumnDef="return_station_id">
+        <th mat-header-cell *matHeaderCellDef> return_station_id. </th>
+        <td mat-cell *matCellDef="let element"> {{element.return_station_id}} </td>
+      </ng-container>
+      
+      <ng-container matColumnDef="return_station_name">
+        <th mat-header-cell *matHeaderCellDef> return_station_name. </th>
+        <td mat-cell *matCellDef="let element"> {{element.return_station_name}} </td>
+      </ng-container>
+      
+      <ng-container matColumnDef="distance">
+        <th mat-header-cell *matHeaderCellDef> distance. </th>
+        <td mat-cell *matCellDef="let element"> {{element.distance}} </td>
+      </ng-container>
+      
+      <ng-container matColumnDef="duration">
+        <th mat-header-cell *matHeaderCellDef> duration. </th>
+        <td mat-cell *matCellDef="let element"> {{element.duration}} </td>
+      </ng-container>      
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <mat-paginator 
+              [length]="length"
+              [pageSize]="pageSize"
+              [pageSizeOptions]="pageSizeOptions"
+              [pageIndex]="pageIndex"
+              [showFirstLastButtons]="showFirstLastButtons"
+              (page)="onPaginate($event)"
+              aria-label="Select page">
+</mat-paginator>
+
+  
+  
