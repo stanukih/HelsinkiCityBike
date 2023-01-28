@@ -1,14 +1,14 @@
 <form class="card-body" [formGroup]="form" (ngSubmit)="onSubmit()">
-  <h2 class="card-title">Login</h2>
+  <mat-card-title>Login</mat-card-title>
   <div class="input-field">
-    <label>Email</label>
+    <mat-card-subtitle>Email</mat-card-subtitle>
     <input formControlName="email" id="email" type="email">
   </div>
   <div class="input-field">
-    <label>Password</label>
+    <mat-card-subtitle>Password</mat-card-subtitle>
     <span class="helper-text"></span>
     <input formControlName="password" id="password" type="password">
   </div>
   <br>
-  <button [disabled]="form.invalid || form.disabled" class="btn btn-primary" type="submit">Login</button>
+  <button mat-button [disabled]="form.invalid || form.disabled" class="btn btn-primary" type="submit">Login</button>
 </form>

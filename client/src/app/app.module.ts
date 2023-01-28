@@ -22,6 +22,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { StantionAddPageComponent } from './stantion-add-page/stantion-add-page.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input'
+import {MatCardModule} from '@angular/material/card' 
 //import { MatHint } from '@angular/material/form-field';
 //import { MatLabel } from '@angular/material/form-field';
 
@@ -40,6 +41,7 @@ import {MatInputModule} from '@angular/material/input'
     StantionAddPageComponent
   ],
   imports: [
+    MatCardModule,
     MatInputModule,
     MatFormFieldModule,
     MatSelectModule,
