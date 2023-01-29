@@ -41,21 +41,24 @@ exports.receiving_travels_quantity = exports.receiving_travel = void 0;
 //const upload = multer({dest:"uploads"})
 var Travel_1 = require("../models/Travel");
 function filterNotCorrect(FilterString) {
-    if (FilterString.match("[^A-Za-z\u00C4\u00D6\u00C5\u00E4\u00F6\u00E50-9s.,_]")) {
-        console.log("FilterString", FilterString);
-        console.log("filterNotCorrect", FilterString.match(".*[^A-Za-z\u00C4\u00D6\u00C5\u00E4\u00F6\u00E50-9-s.,_]*.*"));
+    if (FilterString.match("[^A-Z0-9_]")) {
         return true;
     }
-    else
+    else {
         return false;
+    }
 }
 function parseFilter(FilterString) {
-    var filter_end = '';
-    var filter_split = FilterString.split("_");
-    if ((filter_split.length !== 3) || (filterNotCorrect(filter_split[2]))) {
+    if (filterNotCorrect(FilterString)) {
         return "{}";
     }
+    var filter_split = FilterString.split("_");
+    if ((filter_split.length !== 3)) {
+        return "{}";
+    }
+    var filter_end = '';
     switch (filter_split[1]) {
+        //comparison operation number for mongo                
         case "1":
             filter_end = "{\"".concat(fieldFromNumber(filter_split[0]), "\": \"").concat(filter_split[2], "}\"");
             break;
@@ -84,14 +87,12 @@ function parseFilter(FilterString) {
             filter_end = "{}";
             break;
     }
-    console.log(filter_end);
     return filter_end;
 }
 function fieldFromNumber(fieldsNumber) {
     switch (fieldsNumber) {
         case "0":
             return "departure_time";
-            break;
         case "1":
             return "return_time";
         case "2":
@@ -114,36 +115,9 @@ function parseFields(FieldsString) {
         return "{\"_id\":0, fileLoad:0, \"__v\":0}";
     }
     for (var index = 0; index < FieldsString.length; index++) {
-        fields_end += ', ';
-        console.log(FieldsString[index]);
-        switch (FieldsString[index]) {
-            case "0":
-                fields_end += "\"departure_time\":0";
-                break;
-            case "1":
-                fields_end += "\"return_time\":0";
-                break;
-            case "2":
-                fields_end += "\"departure_station_id\": 0";
-                break;
-            case "3":
-                fields_end += "\"departure_station_name\": 0";
-                break;
-            case "4":
-                fields_end += "\"return_station_id\": 0";
-                break;
-            case "5":
-                fields_end += "\"return_station_name\":0";
-                break;
-            case "6":
-                fields_end += "\"distance\":0";
-                break;
-            case "7":
-                fields_end += "\"duration\":0";
-                break;
-        }
+        fields_end += ", \"".concat(fieldFromNumber(FieldsString[index]), "\":0");
     }
-    return "{\"_id\":0, \"fileLoad\":0, \"__v\":0" + fields_end + "}";
+    return "{\"_id\":0, \"fileLoad\":0, \"__v\":0 ".concat(fields_end, "}");
 }
 function receiving_travel(req, res) {
     return __awaiter(this, void 0, void 0, function () {
@@ -152,15 +126,15 @@ function receiving_travel(req, res) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
-                    page = 3;
+                    page = 2;
                     size = 100;
                     sort = "\"_id\"";
-                    filter = void 0;
-                    fields = void 0;
+                    filter = JSON.parse("{}");
+                    fields = JSON.parse("{}");
                     if (req.query.page != '') {
                         page = req.query.page;
                     }
-                    if (req.query.size != '') {
+                    if ((req.query.size != '') && (req.query.size < 100)) {
                         size = req.query.size;
                     }
                     if (req.query.sort != '') {
@@ -170,7 +144,6 @@ function receiving_travel(req, res) {
                         filter = JSON.parse(parseFilter(req.query.filter));
                     }
                     if (req.query.fields != '') {
-                        console.log(parseFields(req.query.fields));
                         fields = JSON.parse(parseFields(req.query.fields));
                     }
                     return [4 /*yield*/, Travel_1.travelModel.find(filter, fields).sort(sort).skip((page - 1) * size).limit(size)];
@@ -196,18 +169,12 @@ function receiving_travels_quantity(req, res) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
-                    page = 3;
+                    page = 2;
                     size = 100;
                     sort = "_id";
-                    filter = void 0;
+                    filter = JSON.parse("{}");
                     if (req.query.page != '') {
                         page = req.query.page;
-                    }
-                    if (req.query.size != '') {
-                        size = req.query.size;
-                    }
-                    if (req.query.sort != '') {
-                        sort = req.query.sort;
                     }
                     if (req.query.filter != '') {
                         filter = JSON.parse(parseFilter(req.query.filter));

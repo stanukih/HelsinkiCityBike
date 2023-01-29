@@ -113,9 +113,9 @@ export class StationsPageComponent implements OnInit{
       return ''
     }
     let ParamFieldsToReq:string='' 
-    for (let index = 0; index < this.displayedColumns.length; index++) {
+    for (let index = 0; index < this.fieldsInTheTable.length; index++) {
 
-      if (!(selectedFieldToReq.includes(this.displayedColumns[index]))) {
+      if (!(selectedFieldToReq.includes(this.fieldsInTheTable[index]))) {
         switch (index) {
           case 10:
             ParamFieldsToReq += 'A';
