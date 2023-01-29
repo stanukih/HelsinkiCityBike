@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Stantion } from '../shared/services/interfaces';
 import { StantionService } from '../shared/services/stantion.service';
-import {PageEvent,MatPaginator} from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import {PageEvent} from '@angular/material/paginator';
 import { Subscription } from 'rxjs';
 
 
@@ -25,19 +24,19 @@ export class StationsPageComponent implements OnInit{
     this.pageSizeOptions=[25, 50, 100]
     this.pageIndex=0
     this.sortFields=[    
-      {value: 'fid', viewValue: 'fid'},
-      {value: 'id', viewValue: 'id'},
-      {value: 'nimi', viewValue: 'nimi'},
-      {value: 'namn', viewValue: 'namn'},
-      {value: 'name', viewValue: 'name'},
-      {value: 'osoite', viewValue: 'osoite'},
-      {value: 'adress', viewValue: 'adress'},
-      {value: 'kaupunki', viewValue: 'kaupunki'},
-      {value: 'stad', viewValue: 'stad'},
-      {value: 'operaattor', viewValue: 'operaattor'},
-      {value: 'kapasiteet', viewValue: 'kapasiteet'},
-      {value: 'positionX', viewValue: 'positionX'},
-      {value: 'positionY', viewValue: 'positionY'},
+      {value: '0', viewValue: 'fid'},
+      {value: '1', viewValue: 'id'},
+      {value: '2', viewValue: 'nimi'},
+      {value: '3', viewValue: 'namn'},
+      {value: '4', viewValue: 'name'},
+      {value: '5', viewValue: 'osoite'},
+      {value: '6', viewValue: 'adress'},
+      {value: '7', viewValue: 'kaupunki'},
+      {value: '8', viewValue: 'stad'},
+      {value: '9', viewValue: 'operaattor'},
+      {value: 'A', viewValue: 'kapasiteet'},
+      {value: 'B', viewValue: 'positionX'},
+      {value: 'C', viewValue: 'positionY'},
     ]
     this.operator=[
       {value: '1', viewValue: 'equals'},                  //=
@@ -78,7 +77,11 @@ export class StationsPageComponent implements OnInit{
   }
   
   loadData():void{
-    this.displayedColumns=this.selectedFieldToReq
+    this.displayedColumns=[]
+    for (let index = 0; index < this.selectedFieldToReq.length; index++) {
+      this.displayedColumns[index] = this.fieldFromid(this.selectedFieldToReq[index])
+    }
+    console.log("this.displayedColumns",this.displayedColumns)
     let filter:string
     if ((this.selectedFilterField)&& (this.selectedOperatorField)&&(this.filterInput)){
       filter=''.concat(this.selectedFilterField,"_", this.selectedOperatorField,"_",this.filterInput)}
@@ -91,7 +94,11 @@ export class StationsPageComponent implements OnInit{
       
     })
     this.subs.unsubscribe
-    this.subs=this.stantionService.fetch(this.pageIndex+1,this.pageSize,this.selectedSortField,filter,this.createParamFieldsToReq(this.selectedFieldToReq)).subscribe(
+    //this.subs=this.stantionService.fetch(this.pageIndex+1,this.pageSize,this.selectedSortField,filter,this.createParamFieldsToReq(this.selectedFieldToReq)).subscribe(
+    console.log("this.selectedSortField",this.selectedSortField)
+    console.log("filter",filter)
+    console.log("this.sumFiledsToReq",this.sumFiledsToReq())
+    this.subs=this.stantionService.fetch(this.pageIndex+1,this.pageSize,this.selectedSortField,filter,this.sumFiledsToReq()).subscribe(
       
       stantion =>{      
       this.dataSource=stantion
@@ -114,7 +121,6 @@ export class StationsPageComponent implements OnInit{
     }
     let ParamFieldsToReq:string='' 
     for (let index = 0; index < this.fieldsInTheTable.length; index++) {
-
       if (!(selectedFieldToReq.includes(this.fieldsInTheTable[index]))) {
         switch (index) {
           case 10:
@@ -153,7 +159,45 @@ export class StationsPageComponent implements OnInit{
   "positionY"
   ];
   
-  
+  sumFiledsToReq(){
+    let filedsToSort:string=''
+    for (let index = 0; index < this.selectedSortField.length; index++) {
+      filedsToSort+= this.selectedSortField[index]      
+    }
+    return filedsToSort
+  }
 
-  
+  fieldFromid(id:string){
+    switch (id) {
+      case "0":
+        return "fid"
+      case "1":
+        return "id"
+      case "2":
+        return "nimi"
+      case "3":
+        return "namn"
+      case "4":
+        return "name"
+      case "5":
+        return "osoite"
+      case "6":
+        return "adress"
+      case "7":
+        return "kaupunki"
+      case "8":
+        return "stad"
+      case "9":
+        return "operaattor"
+      case "A":
+        return "kapasiteet"
+      case "B":
+        return "positionX"
+      case "C":
+        return "positionY"
+      default:
+        throw new Error("Udefaund key"+id)
+      }
+    }
+    
 }
