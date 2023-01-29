@@ -41,44 +41,46 @@ exports.saveBaseStantions = exports.receiving_stations_quantity = exports.receiv
 //const upload = multer({dest:"uploads"})
 var Stantions_1 = require("../models/Stantions");
 function filterNotCorrect(FilterString) {
-    if (FilterString.match("[^A-Za-z\u00C4\u00D6\u00C5\u00E4\u00F6\u00E50-9s.,_]")) {
-        console.log("FilterString", FilterString);
-        console.log("filterNotCorrect", FilterString.match(".*[^A-Za-z\u00C4\u00D6\u00C5\u00E4\u00F6\u00E50-9s.,_]*.*"));
+    if (FilterString.match("[^A-Z0-9_]")) {
         return true;
     }
-    else
+    else {
         return false;
+    }
 }
 function parseFilter(FilterString) {
-    var filter_end = '';
-    var filter_split = FilterString.split("_");
-    if ((filter_split.length !== 3) || (filterNotCorrect(filter_split[2]))) {
+    if (filterNotCorrect(FilterString)) {
         return "{}";
     }
+    var filter_split = FilterString.split("_");
+    if (filter_split.length !== 3) {
+        return "{}";
+    }
+    var filter_end = '';
     switch (filter_split[1]) {
         case "1":
-            filter_end = "{\"".concat(filter_split[0], "\": \"").concat(filter_split[2], "\"}");
+            filter_end = "{\"".concat(fieldFromNumber(filter_split[0]), "\": \"").concat(filter_split[2], "\"}");
             break;
         case "2":
-            filter_end = "{\"".concat(filter_split[0], "\": {\"$ne\":\"").concat(filter_split[2], "\"}}");
+            filter_end = "{\"".concat(fieldFromNumber(filter_split[0]), "\": {\"$ne\":\"").concat(filter_split[2], "\"}}");
             break;
         case "3":
-            filter_end = "{\"".concat(filter_split[0], "\": {\"$gte\":\"").concat(filter_split[2], "\"}}");
+            filter_end = "{\"".concat(fieldFromNumber(filter_split[0]), "\": {\"$gte\":\"").concat(filter_split[2], "\"}}");
             break;
         case "4":
-            filter_end = "{\"".concat(filter_split[0], "\": {\"$lte\":\"").concat(filter_split[2], "\"}}");
+            filter_end = "{\"".concat(fieldFromNumber(filter_split[0]), "\": {\"$lte\":\"").concat(filter_split[2], "\"}}");
             break;
         case "5":
-            filter_end = "{\"".concat(filter_split[0], "\": {\"$gt\":\"").concat(filter_split[2], "\"}}");
+            filter_end = "{\"".concat(fieldFromNumber(filter_split[0]), "\": {\"$gt\":\"").concat(filter_split[2], "\"}}");
             break;
         case "6":
-            filter_end = "{\"".concat(filter_split[0], "\": {\"$lt\":\"").concat(filter_split[2], "\"}}");
+            filter_end = "{\"".concat(fieldFromNumber(filter_split[0]), "\": {\"$lt\":\"").concat(filter_split[2], "\"}}");
             break;
         case "7":
-            filter_end = "{\"".concat(filter_split[0], "\": {\"$regex\":\"").concat(filter_split[2], "\"}}");
+            filter_end = "{\"".concat(fieldFromNumber(filter_split[0]), "\": {\"$regex\":\"").concat(filter_split[2], "\"}}");
             break;
         case "8":
-            filter_end = "{\"".concat(filter_split[0], "\": {\"$not\":{\"$regex\":\"").concat(filter_split[2], "\"}}}");
+            filter_end = "{\"".concat(fieldFromNumber(filter_split[0]), "\": {\"$not\":{\"$regex\":\"").concat(filter_split[2], "\"}}}");
             break;
         default:
             filter_end = "{}";
@@ -86,57 +88,45 @@ function parseFilter(FilterString) {
     }
     return filter_end;
 }
+function fieldFromNumber(fieldsNumber) {
+    switch (fieldsNumber) {
+        case "0":
+            return "fid";
+        case "1":
+            return "id";
+        case "2":
+            return "nimi";
+        case "3":
+            return "namn";
+        case "4":
+            return "name";
+        case "5":
+            return "osoite";
+        case "6":
+            return "adress";
+        case "7":
+            return "kaupunki";
+        case "8":
+            return "stad";
+        case "9":
+            return "operaattor";
+        case "A":
+            return "kapasiteet";
+        case "B":
+            return "positionX";
+        case "C":
+            return "positionY";
+    }
+}
 function parseFields(FieldsString) {
     var fields_end = '';
     if (FieldsString.length === 0) {
-        return "{_id:0, fileLoad:0, __v:0}";
+        return "{\"_id\":0, fileLoad:0, \"__v\":0}";
     }
     for (var index = 0; index < FieldsString.length; index++) {
-        fields_end += ', ';
-        console.log(FieldsString[index]);
-        switch (FieldsString[index]) {
-            case "0":
-                fields_end += "\"fid\":0";
-                break;
-            case "1":
-                fields_end += "\"id\":0";
-                break;
-            case "2":
-                fields_end += "\"nimi\": 0";
-                break;
-            case "3":
-                fields_end += "\"namn\": 0";
-                break;
-            case "4":
-                fields_end += "\"name\": 0";
-                break;
-            case "5":
-                fields_end += "\"osoite\":0";
-                break;
-            case "6":
-                fields_end += "\"adress\":0";
-                break;
-            case "7":
-                fields_end += "\"kaupunki\":0";
-                break;
-            case "8":
-                fields_end += "\"stad\":0";
-                break;
-            case "9":
-                fields_end += "\"operaattor\":0";
-                break;
-            case "A":
-                fields_end += "\"kapasiteet\":0";
-                break;
-            case "B":
-                fields_end += "\"positionX\":0";
-                break;
-            case "C":
-                fields_end += "\"positionY\":0";
-                break;
-        }
+        fields_end += ", \"".concat(fieldFromNumber(FieldsString[index]), "\":0");
     }
-    return "{\"_id\":0, \"fileLoad\":0, \"__v\":0" + fields_end + "}";
+    return "{\"_id\":0, \"fileLoad\":0, \"__v\":0 ".concat(fields_end, "}");
 }
 function receiving_stations(req, res) {
     return __awaiter(this, void 0, void 0, function () {
@@ -145,15 +135,15 @@ function receiving_stations(req, res) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 2, , 3]);
-                    page = 3;
+                    page = 2;
                     size = 100;
                     sort = "_id";
-                    filter = void 0;
-                    fields = void 0;
+                    filter = JSON.parse("{}");
+                    fields = JSON.parse("{}");
                     if (req.query.page != '') {
                         page = req.query.page;
                     }
-                    if (req.query.size != '') {
+                    if ((req.query.size != '') && (req.query.size < 100)) {
                         size = req.query.size;
                     }
                     if (req.query.sort != '') {
@@ -192,7 +182,7 @@ function receiving_stations_quantity(req, res) {
                     page = 3;
                     size = 100;
                     sort = "_id";
-                    filter = void 0;
+                    filter = JSON.parse("{}");
                     if (req.query.page != '') {
                         page = req.query.page;
                     }

@@ -6,45 +6,47 @@ import { errorModel } from '../models/ErrorLoad';
 import jwt = require('jsonwebtoken')
 
 function filterNotCorrect(FilterString:string):boolean{
-    if (FilterString.match(`[^A-Za-zÄÖÅäöå0-9\s\.\,\_]`)){
-        console.log("FilterString",FilterString)
-        console.log("filterNotCorrect",FilterString.match(`.*[^A-Za-zÄÖÅäöå0-9\s\.\,\_]*.*`))
-    return true
-}
-    else
-    return false
+    if (FilterString.match(`[^A-Z0-9\_]`)){
+        return true
+    }
+    else {
+        return false
+    }
 }
 
 function parseFilter(FilterString:string):string{
-    let filter_end:string=''
+    if (filterNotCorrect(FilterString)){
+        return "{}"        
+    }        
     let filter_split:string[]=FilterString.split("_")
-    if ((filter_split.length!==3)||(filterNotCorrect(filter_split[2]))){
+    if (filter_split.length!==3){
         return "{}"        
     }
+    let filter_end:string=''
             switch (filter_split[1]) {
                 case "1":
-                    filter_end=`{"${filter_split[0]}": "${filter_split[2]}"}`                    
+                    filter_end=`{"${fieldFromNumber(filter_split[0])}": "${filter_split[2]}"}`                    
                     break;
                 case "2":
-                    filter_end=`{"${filter_split[0]}": {"$ne":"${filter_split[2]}"}}`                    
+                    filter_end=`{"${fieldFromNumber(filter_split[0])}": {"$ne":"${filter_split[2]}"}}`                    
                     break;
                 case "3":
-                    filter_end=`{"${filter_split[0]}": {"$gte":"${filter_split[2]}"}}`                    
+                    filter_end=`{"${fieldFromNumber(filter_split[0])}": {"$gte":"${filter_split[2]}"}}`                    
                     break;
                 case "4":
-                    filter_end=`{"${filter_split[0]}": {"$lte":"${filter_split[2]}"}}`                    
+                    filter_end=`{"${fieldFromNumber(filter_split[0])}": {"$lte":"${filter_split[2]}"}}`                    
                     break;
                 case "5":
-                    filter_end=`{"${filter_split[0]}": {"$gt":"${filter_split[2]}"}}`                    
+                    filter_end=`{"${fieldFromNumber(filter_split[0])}": {"$gt":"${filter_split[2]}"}}`                    
                     break;
                 case "6":
-                    filter_end=`{"${filter_split[0]}": {"$lt":"${filter_split[2]}"}}`                    
+                    filter_end=`{"${fieldFromNumber(filter_split[0])}": {"$lt":"${filter_split[2]}"}}`                    
                     break;
                 case "7":
-                    filter_end=`{"${filter_split[0]}": {"$regex":"${filter_split[2]}"}}`                
+                    filter_end=`{"${fieldFromNumber(filter_split[0])}": {"$regex":"${filter_split[2]}"}}`                
                     break;
                 case "8":
-                    filter_end=`{"${filter_split[0]}": {"$not":{"$regex":"${filter_split[2]}"}}}`                
+                    filter_end=`{"${fieldFromNumber(filter_split[0])}": {"$not":{"$regex":"${filter_split[2]}"}}}`                
                     break;            
                 default:
                     filter_end=`{}`
@@ -54,73 +56,63 @@ function parseFilter(FilterString:string):string{
 
 }
 
+function fieldFromNumber(fieldsNumber:string){
+    switch (fieldsNumber) {                
+        case "0":
+            return "fid"
+        case "1":
+            return "id"
+        case "2":
+            return "nimi"
+        case "3":
+            return "namn"
+        case "4":
+            return "name"
+        case "5":
+            return "osoite"
+        case "6":
+            return "adress"
+        case "7":
+            return "kaupunki"
+        case "8":
+            return "stad"
+        case "9":
+            return "operaattor"
+        case "A":
+            return "kapasiteet"
+        case "B":
+            return "positionX"
+        case "C":
+            return "positionY"                                                
+    }
+}
+
 function parseFields(FieldsString:string):string{
     let fields_end:string=''
     if (FieldsString.length===0){
-        return "{_id:0, fileLoad:0, __v:0}"        
+        return `{"_id":0, fileLoad:0, "__v":0}`       
     }
     for (let index = 0; index < FieldsString.length; index++) {
-        fields_end += ', '
-        console.log(FieldsString[index])
-        switch (FieldsString[index]) {
-            case "0":
-                fields_end += `"fid":0`
-                break;
-            case "1":
-                fields_end += `"id":0`
-                break;
-            case "2":
-                fields_end += `"nimi": 0`
-                break;
-            case "3":
-                fields_end += `"namn": 0`
-                break;
-            case "4":
-                fields_end += `"name": 0`
-                break;
-            case "5":
-                fields_end += `"osoite":0`
-                break;
-            case "6":
-                fields_end += `"adress":0`
-                break;
-            case "7":
-                fields_end += `"kaupunki":0`
-                break;
-            case "8":
-                fields_end += `"stad":0`
-                break;
-            case "9":
-                fields_end += `"operaattor":0`
-                break;
-            case "A":
-                fields_end += `"kapasiteet":0`
-                break;
-            case "B":
-                fields_end += `"positionX":0`
-                break;
-            case "C":
-                fields_end += `"positionY":0`
-                break;
-        }
+        fields_end += `, "${fieldFromNumber(FieldsString[index])}":0`
     }
-    return `{"_id":0, "fileLoad":0, "__v":0` + fields_end + `}`
+    return `{"_id":0, "fileLoad":0, "__v":0 ${fields_end}}`
 
 }
+
 
 async function receiving_stations (req,res){
     try {
         //const stantion = await stantionModel.find(req.params.id)
-        let page: number=3
+        let page: number=2
         let size:number=100
         let sort:string="_id"
-        let filter:JSON
-        let fields:JSON
+        let filter:JSON=JSON.parse("{}")
+        let fields:JSON=JSON.parse("{}")
         
         if (req.query.page!=''){
             page=req.query.page
         }
-        if (req.query.size!=''){
+        if ((req.query.size!='')&&(req.query.size<100)){
             size=req.query.size
         }
         if (req.query.sort!=''){
@@ -151,7 +143,7 @@ async function receiving_stations_quantity (req,res){
         let page: number=3
         let size:number=100
         let sort:string="_id"
-        let filter:JSON
+        let filter:JSON=JSON.parse("{}")
         if (req.query.page!=''){
             page=req.query.page
         }
