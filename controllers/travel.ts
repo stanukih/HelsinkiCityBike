@@ -74,6 +74,8 @@ function fieldFromNumber(fieldsNumber:string){
             return "distance"
         case "7":
             return "duration"
+        default:
+            return "departure_time"  
     }
 }
 
@@ -114,7 +116,7 @@ async function receiving_travel (req,res){
             fields=JSON.parse(parseFields(req.query.fields))
         }
         
-        const dataTravel=await travelModel.find(filter,fields).sort(sort).skip((page-1)*size).limit(size)
+        const dataTravel=await travelModel.find(filter,fields).sort(fieldFromNumber(sort)).skip((page-1)*size).limit(size)
 
         
 

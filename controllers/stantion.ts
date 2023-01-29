@@ -83,7 +83,9 @@ function fieldFromNumber(fieldsNumber:string){
         case "B":
             return "positionX"
         case "C":
-            return "positionY"                                                
+            return "positionY"   
+        default:
+            return "fid"                                             
     }
 }
 
@@ -126,7 +128,7 @@ async function receiving_stations (req,res){
             fields=JSON.parse(parseFields(req.query.fields))
         }
         
-        const dataStantion=await stantionModel.find(filter,fields).sort(sort).skip((page-1)*size).limit(size)
+        const dataStantion=await stantionModel.find(filter,fields).sort(fieldFromNumber(sort)).skip((page-1)*size).limit(size)
 
         
 
