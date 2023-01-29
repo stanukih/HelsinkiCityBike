@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Travel } from '../shared/services/interfaces';
 import { TravelService } from '../shared/services/travel.service';
-import {PageEvent,MatPaginator} from '@angular/material/paginator';
-import { MatTableDataSource } from '@angular/material/table';
+import {PageEvent} from '@angular/material/paginator';
 import { Subscription } from 'rxjs';
 
 
