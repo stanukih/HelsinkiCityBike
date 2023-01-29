@@ -24,14 +24,14 @@ export class TravelPageComponent implements OnInit{
     this.pageSizeOptions=[25, 50, 100]
     this.pageIndex=0
     this.sortFields=[    
-      {value: 'departure_time', viewValue: 'departure_time'},
-      {value: 'return_time', viewValue: 'return_time'},
-      {value: 'departure_station_id', viewValue: 'departure_station_id'},
-      {value: 'departure_station_name', viewValue: 'departure_station_name'},
-      {value: 'return_station_id', viewValue: 'return_station_id'},
-      {value: 'return_station_name', viewValue: 'return_station_name'},
-      {value: 'distance', viewValue: 'distance'},
-      {value: 'duration', viewValue: 'duration'}
+      {value: '0', viewValue: 'departure_time'},
+      {value: '1', viewValue: 'return_time'},
+      {value: '2', viewValue: 'departure_station_id'},
+      {value: '3', viewValue: 'departure_station_name'},
+      {value: '4', viewValue: 'return_station_id'},
+      {value: '5', viewValue: 'return_station_name'},
+      {value: '6', viewValue: 'distance'},
+      {value: '7', viewValue: 'duration'}
     ]
     this.operator=[
       {value: '1', viewValue: 'equals'},                  //=
@@ -65,14 +65,14 @@ export class TravelPageComponent implements OnInit{
   onPaginate(pageEvent: PageEvent) {    
     this.pageIndex=pageEvent.pageIndex
     this.pageSize = pageEvent.pageSize;
-    /*this.stantionService.fetch(this.pageIndex+1,this.pageSize).subscribe(stantion =>{      
-      this.dataSource=stantion
-    })*/
     this.loadData()
   }
   
   loadData():void{
-    this.displayedColumns=this.selectedFieldToReq
+    this.displayedColumns=[]
+    for (let index = 0; index < this.selectedFieldToReq.length; index++) {
+      this.displayedColumns[index] = this.fieldFromid(this.selectedFieldToReq[index])
+    }
     let filter:string
     if ((this.selectedFilterField)&& (this.selectedOperatorField)&&(this.filterInput)){
       filter=''.concat(String(this.fieldsInTheTable.indexOf(this.selectedFilterField)),"_", this.selectedOperatorField,"_",this.filterInput)}
@@ -85,7 +85,7 @@ export class TravelPageComponent implements OnInit{
       
     })    
     this.subs.unsubscribe
-    this.subs=this.travelService.fetch(this.pageIndex+1,this.pageSize,this.selectedSortField,filter,this.createParamFieldsToReq(this.selectedFieldToReq)).subscribe(      
+    this.subs=this.travelService.fetch(this.pageIndex+1,this.pageSize,this.selectedSortField,filter,this.sumFiledsToReq()).subscribe(      
       travel =>{      
       this.dataSource=travel
     },
@@ -107,10 +107,10 @@ export class TravelPageComponent implements OnInit{
     }
     let ParamFieldsToReq:string='' 
     for (let index = 0; index < this.fieldsInTheTable.length; index++) {
-      if (!(selectedFieldToReq.includes(this.fieldsInTheTable[index]))) {        
-            ParamFieldsToReq += String(index);        
+      if (!(selectedFieldToReq.includes(this.fieldsInTheTable[index]))) {
+        ParamFieldsToReq += String(index);
       }
-    }    
+    }        
     return ParamFieldsToReq
   }  
 
@@ -125,7 +125,34 @@ export class TravelPageComponent implements OnInit{
     "distance",
     "duration",
   ]
+  sumFiledsToReq(){
+    let filedsToSort:string=''
+    for (let index = 0; index < this.selectedSortField.length; index++) {
+      filedsToSort+= this.selectedSortField[index]      
+    }
+    return filedsToSort
+  }
 
-
-  
+  fieldFromid(id:string){
+    switch (id) {
+      case "0":
+      return "departure_time"
+      case "1":
+        return"return_time"
+      case "2":
+        return "departure_station_id"
+      case "3":
+        return "departure_station_name"
+      case "4":
+        return "return_station_id"
+      case "5":
+        return "return_station_name"
+      case "6":
+        return "distance"
+      case "7":
+        return "duration"
+      default:
+        throw new Error("Udefaund key travel page"+id)
+      }
+    }  
 }

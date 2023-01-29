@@ -81,7 +81,6 @@ export class StationsPageComponent implements OnInit{
     for (let index = 0; index < this.selectedFieldToReq.length; index++) {
       this.displayedColumns[index] = this.fieldFromid(this.selectedFieldToReq[index])
     }
-    console.log("this.displayedColumns",this.displayedColumns)
     let filter:string
     if ((this.selectedFilterField)&& (this.selectedOperatorField)&&(this.filterInput)){
       filter=''.concat(this.selectedFilterField,"_", this.selectedOperatorField,"_",this.filterInput)}
@@ -94,10 +93,6 @@ export class StationsPageComponent implements OnInit{
       
     })
     this.subs.unsubscribe
-    //this.subs=this.stantionService.fetch(this.pageIndex+1,this.pageSize,this.selectedSortField,filter,this.createParamFieldsToReq(this.selectedFieldToReq)).subscribe(
-    console.log("this.selectedSortField",this.selectedSortField)
-    console.log("filter",filter)
-    console.log("this.sumFiledsToReq",this.sumFiledsToReq())
     this.subs=this.stantionService.fetch(this.pageIndex+1,this.pageSize,this.selectedSortField,filter,this.sumFiledsToReq()).subscribe(
       
       stantion =>{      
