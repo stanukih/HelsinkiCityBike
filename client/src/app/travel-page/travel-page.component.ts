@@ -84,6 +84,7 @@ export class TravelPageComponent implements OnInit{
       this.length=stantion_quantity
       
     })    
+    
     this.subs.unsubscribe
     this.subs=this.travelService.fetch(this.pageIndex+1,this.pageSize,this.selectedSortField,filter,this.sumFiledsToReq()).subscribe(      
       travel =>{      
@@ -127,8 +128,8 @@ export class TravelPageComponent implements OnInit{
   ]
   sumFiledsToReq(){
     let filedsToSort:string=''
-    for (let index = 0; index < this.selectedSortField.length; index++) {
-      filedsToSort+= this.selectedSortField[index]      
+    for (let index = 0; index < this.selectedFieldToReq.length; index++) {
+      filedsToSort+= this.selectedFieldToReq[index]      
     }
     return filedsToSort
   }

@@ -79,15 +79,26 @@ function fieldFromNumber(fieldsNumber:string){
     }
 }
 
-function parseFields(FieldsString:string):string{
-    let fields_end:string=''
+function parseFields(FieldsString:string):allFields{
     if (FieldsString.length===0){
-        return `{"_id":0, fileLoad:0, "__v":0}`       
+        return {"_id":0, "fileLoad":0, "__v":0}
+    }
+    let fields = {
+        "_id":0, 
+        "fileLoad":0, 
+        "__v":0,
+        "departure_time": 0,
+        "return_time": 0,
+        "departure_station_id": 0,
+        "departure_station_name": 0,
+        "return_station_id": 0,
+        "return_station_name": 0,
+        "distance": 0,
+        "duration": 0
     }
     for (let index = 0; index < FieldsString.length; index++) {
-        fields_end += `, "${fieldFromNumber(FieldsString[index])}":0`
-    }
-    return `{"_id":0, "fileLoad":0, "__v":0 ${fields_end}}`
+        delete fields[fieldFromNumber(FieldsString[index])]    }
+    return fields
 
 }
 
@@ -98,7 +109,7 @@ async function receiving_travel (req,res){
         let size:number=100
         let sort:string=`"_id"`
         let filter:JSON=JSON.parse("{}")
-        let fields:JSON=JSON.parse("{}")
+        let fields:allFields={}
         
         if (req.query.page!=''){
             page=req.query.page
@@ -113,7 +124,7 @@ async function receiving_travel (req,res){
             filter=JSON.parse(parseFilter(req.query.filter))
         } 
         if (req.query.fields!=''){        
-            fields=JSON.parse(parseFields(req.query.fields))
+            fields=parseFields(req.query.fields)
         }
         
         const dataTravel=await travelModel.find(filter,fields).sort(fieldFromNumber(sort)).skip((page-1)*size).limit(size)
@@ -151,7 +162,19 @@ async function receiving_travels_quantity (req,res){
     }
 }
 
-//interface 
+interface allFields {
+    "_id"?:number, 
+    "fileLoad"?:number, 
+    "__v"?:number,
+    "departure_time"?: number,
+    "return_time"?: number,
+    "departure_station_id"?: number,
+    "departure_station_name"?: number,
+    "return_station_id"?: number,
+    "return_station_name"?: number,
+    "distance"?: number,
+    "duration"?: number,
+}
 
 
 export { receiving_travel, receiving_travels_quantity};
