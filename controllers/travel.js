@@ -107,6 +107,8 @@ function fieldFromNumber(fieldsNumber) {
             return "distance";
         case "7":
             return "duration";
+        default:
+            return "departure_time";
     }
 }
 function parseFields(FieldsString) {
@@ -146,7 +148,7 @@ function receiving_travel(req, res) {
                     if (req.query.fields != '') {
                         fields = JSON.parse(parseFields(req.query.fields));
                     }
-                    return [4 /*yield*/, Travel_1.travelModel.find(filter, fields).sort(sort).skip((page - 1) * size).limit(size)];
+                    return [4 /*yield*/, Travel_1.travelModel.find(filter, fields).sort(fieldFromNumber(sort)).skip((page - 1) * size).limit(size)];
                 case 1:
                     dataTravel = _a.sent();
                     res.status(200).json(dataTravel);

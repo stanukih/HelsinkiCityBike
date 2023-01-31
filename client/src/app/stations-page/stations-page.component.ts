@@ -156,8 +156,8 @@ export class StationsPageComponent implements OnInit{
   
   sumFiledsToReq(){
     let filedsToSort:string=''
-    for (let index = 0; index < this.selectedSortField.length; index++) {
-      filedsToSort+= this.selectedSortField[index]      
+    for (let index = 0; index < this.selectedFieldToReq.length; index++) {
+      filedsToSort+= this.selectedFieldToReq[index]      
     }
     return filedsToSort
   }

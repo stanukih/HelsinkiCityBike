@@ -89,15 +89,31 @@ function fieldFromNumber(fieldsNumber:string){
     }
 }
 
-function parseFields(FieldsString:string):string{
-    let fields_end:string=''
+function parseFields(FieldsString:string):allFields{    
     if (FieldsString.length===0){
-        return `{"_id":0, fileLoad:0, "__v":0}`       
+        return {"_id":0, "fileLoad":0, "__v":0}
+    }
+    let fields = {
+        "_id":0, 
+        "fileLoad":0, 
+        "__v":0,
+        "fid": 0,
+        "id": 0,
+        "nimi": 0,
+        "namn": 0,
+        "name": 0,
+        "osoite": 0,
+        "adress": 0,
+        "kaupunki": 0,
+        "stad": 0,
+        "operaattor": 0,
+        "kapasiteet": 0,
+        "positionX": 0,
+        "positionY": 0,
     }
     for (let index = 0; index < FieldsString.length; index++) {
-        fields_end += `, "${fieldFromNumber(FieldsString[index])}":0`
-    }
-    return `{"_id":0, "fileLoad":0, "__v":0 ${fields_end}}`
+        delete fields[fieldFromNumber(FieldsString[index])]    }
+    return fields
 
 }
 
@@ -109,7 +125,7 @@ async function receiving_stations (req,res){
         let size:number=100
         let sort:string="_id"
         let filter:JSON=JSON.parse("{}")
-        let fields:JSON=JSON.parse("{}")
+        let fields:allFields={}
         
         if (req.query.page!=''){
             page=req.query.page
@@ -125,7 +141,7 @@ async function receiving_stations (req,res){
         }
         if (req.query.fields!=''){        
             console.log(parseFields(req.query.fields))    
-            fields=JSON.parse(parseFields(req.query.fields))
+            fields=parseFields(req.query.fields)
         }
         
         const dataStantion=await stantionModel.find(filter,fields).sort(fieldFromNumber(sort)).skip((page-1)*size).limit(size)
@@ -236,6 +252,25 @@ async function saveBaseStantions(req,res) {
             message:"Record creation error.",
         })
     }}
+}
+
+interface allFields{
+    "_id"?:number, 
+    "fileLoad"?:number, 
+    "__v"?:number,
+    "fid"?: number,
+    "id"?: number,
+    "nimi"?: number,
+    "namn"?: number,
+    "name"?: number,
+    "osoite"?: number,
+    "adress"?: number,
+    "kaupunki"?: number,
+    "stad"?: number,
+    "operaattor"?: number,
+    "kapasiteet"?: number,
+    "positionX"?: number,
+    "positionY"?: number,    
 }
 
 export { receiving_stations, receiving_stations_quantity, saveBaseStantions};

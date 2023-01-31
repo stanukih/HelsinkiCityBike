@@ -116,17 +116,36 @@ function fieldFromNumber(fieldsNumber) {
             return "positionX";
         case "C":
             return "positionY";
+        default:
+            return "fid";
     }
 }
 function parseFields(FieldsString) {
-    var fields_end = '';
     if (FieldsString.length === 0) {
-        return "{\"_id\":0, fileLoad:0, \"__v\":0}";
+        return { "_id": 0, "fileLoad": 0, "__v": 0 };
     }
+    var fields = {
+        "_id": 0,
+        "fileLoad": 0,
+        "__v": 0,
+        "fid": 0,
+        "id": 0,
+        "nimi": 0,
+        "namn": 0,
+        "name": 0,
+        "osoite": 0,
+        "adress": 0,
+        "kaupunki": 0,
+        "stad": 0,
+        "operaattor": 0,
+        "kapasiteet": 0,
+        "positionX": 0,
+        "positionY": 0
+    };
     for (var index = 0; index < FieldsString.length; index++) {
-        fields_end += ", \"".concat(fieldFromNumber(FieldsString[index]), "\":0");
+        delete fields[fieldFromNumber(FieldsString[index])];
     }
-    return "{\"_id\":0, \"fileLoad\":0, \"__v\":0 ".concat(fields_end, "}");
+    return fields;
 }
 function receiving_stations(req, res) {
     return __awaiter(this, void 0, void 0, function () {
@@ -139,7 +158,7 @@ function receiving_stations(req, res) {
                     size = 100;
                     sort = "_id";
                     filter = JSON.parse("{}");
-                    fields = JSON.parse("{}");
+                    fields = {};
                     if (req.query.page != '') {
                         page = req.query.page;
                     }
@@ -154,9 +173,9 @@ function receiving_stations(req, res) {
                     }
                     if (req.query.fields != '') {
                         console.log(parseFields(req.query.fields));
-                        fields = JSON.parse(parseFields(req.query.fields));
+                        fields = parseFields(req.query.fields);
                     }
-                    return [4 /*yield*/, Stantions_1.stantionModel.find(filter, fields).sort(sort).skip((page - 1) * size).limit(size)];
+                    return [4 /*yield*/, Stantions_1.stantionModel.find(filter, fields).sort(fieldFromNumber(sort)).skip((page - 1) * size).limit(size)];
                 case 1:
                     dataStantion = _a.sent();
                     res.status(200).json(dataStantion);
