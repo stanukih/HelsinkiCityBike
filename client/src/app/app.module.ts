@@ -22,7 +22,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { StantionAddPageComponent } from './stantion-add-page/stantion-add-page.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input'
-import {MatCardModule} from '@angular/material/card' 
+import {MatCardModule} from '@angular/material/card';
+import { ImportDataComponent } from './import-data/import-data.component' 
 //import { MatHint } from '@angular/material/form-field';
 //import { MatLabel } from '@angular/material/form-field';
 
@@ -38,7 +39,8 @@ import {MatCardModule} from '@angular/material/card'
     RegistrationPageComponent,
     StationsPageComponent,
     TravelPageComponent,
-    StantionAddPageComponent
+    StantionAddPageComponent,
+    ImportDataComponent
   ],
   imports: [
     MatCardModule,

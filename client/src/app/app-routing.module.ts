@@ -9,6 +9,7 @@ import { BasicLayoutComponent } from './shared/layouts/basic-layout/basic-layout
 import { StationsPageComponent } from './stations-page/stations-page.component';
 import { TravelPageComponent } from './travel-page/travel-page.component';
 import { StantionAddPageComponent } from './stantion-add-page/stantion-add-page.component';
+import { ImportDataComponent } from './import-data/import-data.component';
 
 const routes: Routes = [
   {
@@ -34,6 +35,9 @@ const routes: Routes = [
     },
     {
       path: "stantion_add", component: StantionAddPageComponent
+    },
+    {
+      path: "import_data", component: ImportDataComponent
     }
     ]
   }
