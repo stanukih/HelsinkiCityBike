@@ -21,22 +21,17 @@ export class ImportDataComponent {
   travelsFileName: File | null
   subs!:Subscription
   importStantions(event: Event) {
-
     const target = event.target as HTMLInputElement
     if (target.files) {
       this.stantionsFileName = target.files[0]
     }
-    /*console.log("this.stantionsFileName=",this.stantionsFileName)
-    console.log("this.travelsFileName",this.travelsFileName)*/
   }
   importTravels(event: Event) {
-
+    console.log("importTravels")
     const target = event.target as HTMLInputElement
     if (target.files) {
       this.travelsFileName = target.files[0]
     }
-    /*console.log("this.stantionsFileName=",this.stantionsFileName)
-    console.log("this.travelsFileName",this.travelsFileName)*/
   }
   sendStantions() {
     if (this.stantionsFileName === null) {
@@ -60,10 +55,26 @@ export class ImportDataComponent {
     this.subs.unsubscribe
   }
   sendTravel() {
-    if (this.stantionsFileName === null) {
+    console.log("sendTravel")
+    if (this.travelsFileName === null) {
       alert("Select file to packet upload")
       return
     }
+    this.subs=this.stantionService.travel_packet_add(this.travelsFileName).subscribe(
+      resp => {
+        if (resp["status_add"]==="success"){
+          alert(resp["message"])
+          this.router.navigate(['/travel'])
+        }
+        else{
+          
+        }        
+      },
+      e=>{
+        alert("File not loaded. The file must be in csv format and no more than 250 MB")
+      }      
+    )
+    this.subs.unsubscribe
   }
 }
 

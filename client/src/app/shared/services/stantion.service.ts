@@ -52,4 +52,11 @@ export class StantionService {
 
         return this.http.post<resJSON>(`/api/stantion/import_stantions`, formData)
     }
+
+    travel_packet_add(file: File) {
+        const formData: FormData = new FormData();
+        formData.append("filedata", file);
+
+        return this.http.post<resJSON>(`/api/travel/import_travels`, formData)
+    }
 }

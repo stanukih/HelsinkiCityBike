@@ -36,10 +36,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.receiving_travels_quantity = exports.receiving_travel = void 0;
+exports.saveBaseTravelPack = exports.receiving_travels_quantity = exports.receiving_travel = void 0;
 //const multer  = require("multer");
 //const upload = multer({dest:"uploads"})
 var Travel_1 = require("../models/Travel");
+var ErrorLoad_1 = require("../models/ErrorLoad");
+var travel_1 = require("../interfaces/travel");
+var lineReader = require("line-reader");
 function filterNotCorrect(FilterString) {
     if (FilterString.match("[^A-Z0-9_]")) {
         return true;
@@ -209,3 +212,181 @@ function receiving_travels_quantity(req, res) {
     });
 }
 exports.receiving_travels_quantity = receiving_travels_quantity;
+function saveFromDatabase(data) {
+    return __awaiter(this, void 0, void 0, function () {
+        var travel, e_3;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    travel = new Travel_1.travelModel({
+                        departure_time: data.departure_time,
+                        return_time: data.return_time,
+                        departure_station_id: data.departure_station_id,
+                        departure_station_name: data.departure_station_name,
+                        return_station_id: data.return_station_id,
+                        return_station_name: data.return_station_name,
+                        distance: data.distance,
+                        duration: data.duration
+                    });
+                    if ((0, travel_1.typeImportPack)(data)) {
+                        fileLoad: data.fileLoad;
+                    }
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, travel.save()];
+                case 2:
+                    _a.sent();
+                    return [2 /*return*/, { status_add: "success" }];
+                case 3:
+                    e_3 = _a.sent();
+                    return [2 /*return*/, {
+                            status_add: "failed",
+                            message: e_3
+                        }];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
+function saveBaseTravelPack(req, res) {
+    var _this = this;
+    if (!(req.file)) {
+        res.status(409).json({
+            status_add: "failed",
+            codeFailed: 1053,
+            message: "File not loaded"
+        });
+        return;
+    }
+    var filePath = req.file.path;
+    res.status(200).json({
+        status_add: "success",
+        message: "File received. Its processing"
+    });
+    var index = 0;
+    lineReader.eachLine("./".concat(filePath), function (line) { return __awaiter(_this, void 0, void 0, function () {
+        var dataFromString, statusDataFromString, statusSave;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!(index > 0)) return [3 /*break*/, 5];
+                    dataFromString = lineParce(line);
+                    return [4 /*yield*/, correctLine(dataFromString)];
+                case 1:
+                    statusDataFromString = _a.sent();
+                    if (!(statusDataFromString.status_add === "success")) return [3 /*break*/, 3];
+                    return [4 /*yield*/, saveFromDatabase({
+                            departure_time: new Date(dataFromString[0]),
+                            return_time: new Date(dataFromString[1]),
+                            departure_station_id: Number(dataFromString[2]),
+                            departure_station_name: dataFromString[3],
+                            return_station_id: Number(dataFromString[4]),
+                            return_station_name: dataFromString[5],
+                            distance: Number(dataFromString[6]),
+                            duration: Number(dataFromString[7]),
+                            fileLoad: filePath
+                        })];
+                case 2:
+                    statusSave = _a.sent();
+                    return [3 /*break*/, 5];
+                case 3: return [4 /*yield*/, saveFromDatabaseError({
+                        string_to_load: line,
+                        doctype: "Travel",
+                        error: statusDataFromString.codeFailed,
+                        fileLoad: filePath
+                    })];
+                case 4:
+                    _a.sent();
+                    _a.label = 5;
+                case 5:
+                    index++;
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+}
+exports.saveBaseTravelPack = saveBaseTravelPack;
+function lineParce(line) {
+    var temp_data = line.split('"');
+    var data = [];
+    for (var i = 0; i < temp_data.length; i++) {
+        if (i % 2 === 0) {
+            var temp_data2 = temp_data[i].split(',');
+            for (var j = 0; j < temp_data2.length; j++) {
+                if (temp_data2[j] != "") {
+                    data.push(temp_data2[j]);
+                }
+            }
+        }
+        else {
+            data.push(temp_data[i]);
+        }
+    }
+    return data;
+}
+function correctLine(data) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            if (data.length != 8) {
+                return [2 /*return*/, {
+                        status_add: "failed",
+                        codeFailed: 8
+                    }];
+            }
+            if ((isNaN(Date.parse(data[0]))) ||
+                (isNaN(Date.parse(data[1]))) ||
+                (isNaN(Number(data[2]))) ||
+                (isNaN(Number(data[4]))) ||
+                (isNaN(Number(data[6]))) ||
+                (isNaN(Number(data[7])))) {
+                return [2 /*return*/, {
+                        status_add: "failed",
+                        codeFailed: 1101112
+                    }];
+            }
+            /*const TravelSearch = await travelModel.findOne({
+                $and:[{departure_time: new Date(data[0])},
+                {return_time: new Date(data[1])},
+                {departure_station_id: Number(data[2])},
+                {departure_station_name: data[3]},
+                {return_station_id: Number(data[4])},
+                {return_station_name: data[5]},
+                {distance: Number(data[6])},
+                {duration: Number(data[7])}]
+            })
+            if ((TravelSearch)){
+                return     {
+                    status_add:"failed",
+                    codeFailed:9669
+                }
+            }*/
+            return [2 /*return*/, {
+                    status_add: "success"
+                }];
+        });
+    });
+}
+function saveFromDatabaseError(data) {
+    return __awaiter(this, void 0, void 0, function () {
+        var errorToSave, e_4;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    errorToSave = new ErrorLoad_1.errorModel(data);
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, errorToSave.save()];
+                case 2:
+                    _a.sent();
+                    return [3 /*break*/, 4];
+                case 3:
+                    e_4 = _a.sent();
+                    console.log(e_4);
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}

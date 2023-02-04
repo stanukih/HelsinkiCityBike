@@ -3,6 +3,8 @@
 import { travelModel } from "../models/Travel";
 import { errorModel } from '../models/ErrorLoad';
 import jwt = require('jsonwebtoken')
+import { travelFieldsAllExistOrNot, travelFieldsImport, travelFieldsImportPack, typeImportPack, statusAll, ErrorSaveIntarface } from "../interfaces/travel";
+import lineReader = require('line-reader');
 
 function filterNotCorrect(FilterString:string):boolean{
     if (FilterString.match(`[^A-Z0-9\_]`)){
@@ -79,11 +81,11 @@ function fieldFromNumber(fieldsNumber:string){
     }
 }
 
-function parseFields(FieldsString:string):allFields{
+function parseFields(FieldsString:string):travelFieldsAllExistOrNot{
     if (FieldsString.length===0){
         return {"_id":0, "fileLoad":0, "__v":0}
     }
-    let fields = {
+    let fields:travelFieldsAllExistOrNot = {
         "_id":0, 
         "fileLoad":0, 
         "__v":0,
@@ -109,7 +111,7 @@ async function receiving_travel (req,res){
         let size:number=100
         let sort:string=`"_id"`
         let filter:JSON=JSON.parse("{}")
-        let fields:allFields={}
+        let fields:travelFieldsAllExistOrNot={}
         
         if (req.query.page!=''){
             page=req.query.page
@@ -161,20 +163,134 @@ async function receiving_travels_quantity (req,res){
         console.log(e)
     }
 }
-
-interface allFields {
-    "_id"?:number, 
-    "fileLoad"?:number, 
-    "__v"?:number,
-    "departure_time"?: number,
-    "return_time"?: number,
-    "departure_station_id"?: number,
-    "departure_station_name"?: number,
-    "return_station_id"?: number,
-    "return_station_name"?: number,
-    "distance"?: number,
-    "duration"?: number,
+async function saveFromDatabase(data: travelFieldsImport | travelFieldsImportPack): Promise<statusAll> {
+    let travel = new travelModel({
+        
+        departure_time: data.departure_time,
+            return_time: data.return_time,
+            departure_station_id: data.departure_station_id,
+            departure_station_name:data.departure_station_name,
+            return_station_id: data.return_station_id,
+            return_station_name:data.return_station_name,
+            distance:data.distance,
+            duration:data.duration,
+            
+    })
+    if (typeImportPack(data)) {
+        fileLoad:data.fileLoad
+    }
+    try {
+        await travel.save()
+        return { status_add: "success" }
+    }
+    catch (e) {
+        return {
+            status_add: "failed",
+            message: e as Error,
+        }
+    }
 }
 
+function saveBaseTravelPack(req, res) {
 
-export { receiving_travel, receiving_travels_quantity};
+    if (!(req.file)) {
+        res.status(409).json({
+            status_add: "failed",
+            codeFailed: 1053,
+            message: "File not loaded",
+        })
+        return
+    }
+    const filePath: string = req.file.path
+    res.status(200).json({
+        status_add: "success",
+        message: "File received. Its processing"
+    })
+
+    let index = 0
+
+    lineReader.eachLine(`./${filePath}`, async (line) => {
+        if (index > 0) {
+            const dataFromString: string[] = lineParce(line)
+            const statusDataFromString = await correctLine(dataFromString)
+            if (statusDataFromString.status_add === "success") {
+                const statusSave = await saveFromDatabase({
+                    departure_time: new Date(dataFromString[0]),
+                    return_time: new Date(dataFromString[1]),
+                    departure_station_id: Number(dataFromString[2]),
+                    departure_station_name: dataFromString[3],
+                    return_station_id: Number(dataFromString[4]),
+                    return_station_name: dataFromString[5],
+                    distance: Number(dataFromString[6]),
+                    duration: Number(dataFromString[7]),
+                    fileLoad: filePath
+                })
+            }
+            else {
+                await saveFromDatabaseError({
+                    string_to_load: line,
+                    doctype: "Travel",
+                    error: statusDataFromString.codeFailed,
+                    fileLoad: filePath
+                })
+            }
+
+        }
+        index++;
+    })
+}
+
+function lineParce(line: string): string[] {
+    const temp_data = line.split('"')
+    let data: string[] = []
+    for (let i = 0; i < temp_data.length; i++) {
+        if (i % 2 === 0) {
+            let temp_data2 = temp_data[i].split(',')
+            for (let j = 0; j < temp_data2.length; j++) {
+                if (temp_data2[j] != "") {
+                    data.push(temp_data2[j])
+                }
+            }
+        }
+        else {
+            data.push(temp_data[i])
+        }
+    }    
+    return data
+}
+
+async function correctLine(data: string[]): Promise<statusAll> {
+    if (data.length != 8) {
+        return{
+            status_add:"failed",
+            codeFailed:8            
+        }       
+    }
+    if (
+        (isNaN(Date.parse(data[0]))) ||
+        (isNaN(Date.parse(data[1]))) ||
+        (isNaN(Number(data[2]))) ||
+        (isNaN(Number(data[4]))) ||
+        (isNaN(Number(data[6]))) ||
+        (isNaN(Number(data[7])))               
+    ) {
+        return{
+            status_add:"failed",
+            codeFailed:1101112            
+        }    
+    }
+    return {
+        status_add:"success"
+    }
+}
+async function saveFromDatabaseError(data: ErrorSaveIntarface){
+    let errorToSave = new errorModel(data)
+    try {
+        await errorToSave.save()        
+    }
+    catch (e) {
+        console.log(e)
+    }
+}
+
+export { receiving_travel, receiving_travels_quantity, saveBaseTravelPack};

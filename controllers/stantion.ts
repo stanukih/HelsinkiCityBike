@@ -6,7 +6,6 @@ import { errorModel } from '../models/ErrorLoad';
 import { stantionFieldsAllExistOrNot, stantionFieldsImport, stantionFieldsImportPack, typeImportPack, statusAll, ErrorSaveIntarface } from "../interfaces/stantion";
 import jwt = require('jsonwebtoken')
 import lineReader = require('line-reader');
-import { pathToFileURL } from "url";
 
 function filterNotCorrect(FilterString:string):boolean{
     if (FilterString.match(`[^A-Z0-9\_]`)){
