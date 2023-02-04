@@ -36,10 +36,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 exports.__esModule = true;
-exports.saveBaseStantions = exports.receiving_stations_quantity = exports.receiving_stations = void 0;
+exports.saveBaseStantionsPack = exports.saveBaseStantions = exports.receiving_stations_quantity = exports.receiving_stations = void 0;
 //const multer  = require("multer");
 //const upload = multer({dest:"uploads"})
 var Stantions_1 = require("../models/Stantions");
+var ErrorLoad_1 = require("../models/ErrorLoad");
+var stantion_1 = require("../interfaces/stantion");
+var lineReader = require("line-reader");
 function filterNotCorrect(FilterString) {
     if (FilterString.match("[^A-Z0-9_]")) {
         return true;
@@ -172,7 +175,6 @@ function receiving_stations(req, res) {
                         filter = JSON.parse(parseFilter(req.query.filter));
                     }
                     if (req.query.fields != '') {
-                        console.log(parseFields(req.query.fields));
                         fields = parseFields(req.query.fields);
                     }
                     return [4 /*yield*/, Stantions_1.stantionModel.find(filter, fields).sort(fieldFromNumber(sort)).skip((page - 1) * size).limit(size)];
@@ -230,27 +232,38 @@ function receiving_stations_quantity(req, res) {
     });
 }
 exports.receiving_stations_quantity = receiving_stations_quantity;
-//interface 
+function validationOfFields(req) {
+    if ((!(req.body.fid)) || (isNaN(Number(req.body.fid))) ||
+        (!(req.body.id)) || (isNaN(Number(req.body.id))) ||
+        (!(req.body.nimi)) || ((req.body.nimi === "")) ||
+        (!(req.body.namn)) || ((req.body.namn === "")) ||
+        (!(req.body.name)) || ((req.body.name === "")) ||
+        (!(req.body.osoite)) || ((req.body.osoite === "")) ||
+        (!(req.body.adress)) || ((req.body.adress === "")) ||
+        (!(req.body.kapasiteet)) || (isNaN(Number(req.body.kapasiteet))) ||
+        (!(req.body.positionX)) || (isNaN(Number(req.body.positionX))) ||
+        (!(req.body.positionY)) || (isNaN(Number(req.body.positionY)))) {
+        return {
+            status_add: "failed",
+            codeFailed: 1015,
+            message: "Not all required fields are present in the request"
+        };
+    }
+    else
+        return { status_add: "success" };
+}
 function saveBaseStantions(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var dataStantionount, stantion, e_3;
+        var resultvalidationOfFields, dataStantionount, result;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    if ((!(req.body.fid)) || (isNaN(Number(req.body.fid))) ||
-                        (!(req.body.id)) || (isNaN(Number(req.body.id))) ||
-                        (!(req.body.nimi)) || ((req.body.nimi === "")) ||
-                        (!(req.body.namn)) || ((req.body.namn === "")) ||
-                        (!(req.body.name)) || ((req.body.name === "")) ||
-                        (!(req.body.osoite)) || ((req.body.osoite === "")) ||
-                        (!(req.body.adress)) || ((req.body.adress === "")) ||
-                        (!(req.body.kapasiteet)) || (isNaN(Number(req.body.kapasiteet))) ||
-                        (!(req.body.positionX)) || (isNaN(Number(req.body.positionX))) ||
-                        (!(req.body.positionY)) || (isNaN(Number(req.body.positionY)))) {
+                    resultvalidationOfFields = validationOfFields(req);
+                    if (resultvalidationOfFields.status_add === "failed") {
                         res.status(400).json({
-                            status_add: "failed",
-                            codeFailed: 1015,
-                            message: "Not all required fields are present in the request"
+                            status_add: resultvalidationOfFields.status_add,
+                            codeFailed: resultvalidationOfFields.codeFailed,
+                            message: resultvalidationOfFields.message
                         });
                         return [2 /*return*/];
                     }
@@ -265,44 +278,212 @@ function saveBaseStantions(req, res) {
                         record: dataStantionount
                     });
                     return [2 /*return*/];
-                case 2:
-                    _a.trys.push([2, 4, , 5]);
-                    console.log(req.body);
-                    stantion = new Stantions_1.stantionModel({
-                        fid: req.body.fid,
-                        id: req.body.id,
-                        nimi: req.body.nimi,
-                        namn: req.body.namn,
-                        name: req.body.name,
-                        osoite: req.body.osoite,
-                        adress: req.body.adress,
-                        kaupunki: req.body.kaupunki ? req.body.kaupunki : null,
-                        stad: req.body.stad ? req.body.stad : null,
-                        operaattor: req.body.operaattor ? req.body.operaattor : null,
-                        kapasiteet: req.body.kapasiteet,
-                        positionX: req.body.positionX,
-                        positionY: req.body.positionY
-                    });
-                    console.log("---------3");
-                    return [4 /*yield*/, stantion.save()];
+                case 2: return [4 /*yield*/, saveFromDatabase(req.body)];
                 case 3:
-                    _a.sent();
-                    res.status(200).json({
-                        status_add: "success"
-                    });
-                    return [2 /*return*/];
-                case 4:
-                    e_3 = _a.sent();
-                    console.log(e_3);
-                    res.status(400).json({
-                        status_add: "failed",
-                        codeFailed: 1100,
-                        message: "Record creation error."
-                    });
-                    return [3 /*break*/, 5];
-                case 5: return [2 /*return*/];
+                    result = _a.sent();
+                    if (result.status_add === "success") {
+                        res.status(200).json({
+                            status_add: "success"
+                        });
+                    }
+                    else {
+                        res.status(400).json({
+                            status_add: "failed",
+                            codeFailed: result.codeFailed,
+                            message: result.message
+                        });
+                    }
+                    _a.label = 4;
+                case 4: return [2 /*return*/];
             }
         });
     });
 }
 exports.saveBaseStantions = saveBaseStantions;
+function saveFromDatabase(data) {
+    return __awaiter(this, void 0, void 0, function () {
+        var stantion, e_3;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    stantion = new Stantions_1.stantionModel({
+                        fid: data.fid,
+                        id: data.id,
+                        nimi: data.nimi,
+                        namn: data.namn,
+                        name: data.name,
+                        osoite: data.osoite,
+                        adress: data.adress,
+                        kaupunki: data.kaupunki,
+                        stad: data.stad,
+                        operaattor: data.operaattor,
+                        kapasiteet: data.kapasiteet,
+                        positionX: data.positionX,
+                        positionY: data.positionY,
+                        user: data.user
+                    });
+                    if ((0, stantion_1.typeImportPack)(data)) {
+                        stantion.fileLoad = data.fileLoad;
+                    }
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, stantion.save()];
+                case 2:
+                    _a.sent();
+                    return [2 /*return*/, { status_add: "success" }];
+                case 3:
+                    e_3 = _a.sent();
+                    return [2 /*return*/, {
+                            status_add: "failed",
+                            message: e_3
+                        }];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
+function saveBaseStantionsPack(req, res) {
+    var _this = this;
+    if (!(req.file)) {
+        res.status(409).json({
+            status_add: "failed",
+            codeFailed: 1053,
+            message: "File not loaded"
+        });
+        return;
+    }
+    var filePath = req.file.path;
+    res.status(200).json({
+        status_add: "success",
+        message: "File received. Its processing"
+    });
+    var index = 0;
+    lineReader.eachLine("./".concat(filePath), function (line) { return __awaiter(_this, void 0, void 0, function () {
+        var dataFromString, statusDataFromString, statusSave;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!(index > 0)) return [3 /*break*/, 5];
+                    dataFromString = lineParce(line);
+                    return [4 /*yield*/, correctLine(dataFromString)];
+                case 1:
+                    statusDataFromString = _a.sent();
+                    if (!(statusDataFromString.status_add === "success")) return [3 /*break*/, 3];
+                    return [4 /*yield*/, saveFromDatabase({
+                            fid: Number(dataFromString[0]),
+                            id: Number(dataFromString[1]),
+                            nimi: dataFromString[2],
+                            namn: dataFromString[3],
+                            name: dataFromString[4],
+                            osoite: dataFromString[5],
+                            adress: dataFromString[6],
+                            kaupunki: dataFromString[7],
+                            stad: dataFromString[8],
+                            operaattor: dataFromString[9],
+                            kapasiteet: Number(dataFromString[10]),
+                            positionX: Number(dataFromString[11]),
+                            positionY: Number(dataFromString[12]),
+                            fileLoad: filePath
+                        })];
+                case 2:
+                    statusSave = _a.sent();
+                    return [3 /*break*/, 5];
+                case 3: return [4 /*yield*/, saveFromDatabaseError({
+                        string_to_load: line,
+                        doctype: "Stantion",
+                        error: statusDataFromString.codeFailed,
+                        fileLoad: filePath
+                    })];
+                case 4:
+                    _a.sent();
+                    _a.label = 5;
+                case 5:
+                    index++;
+                    return [2 /*return*/];
+            }
+        });
+    }); });
+}
+exports.saveBaseStantionsPack = saveBaseStantionsPack;
+function lineParce(line) {
+    var temp_data = line.split('"');
+    var data = [];
+    for (var i = 0; i < temp_data.length; i++) {
+        if (i % 2 === 0) {
+            var temp_data2 = temp_data[i].split(',');
+            for (var j = 0; j < temp_data2.length; j++) {
+                if (temp_data2[j] != "") {
+                    data.push(temp_data2[j]);
+                }
+            }
+        }
+        else {
+            data.push(temp_data[i]);
+        }
+    }
+    return data;
+}
+function correctLine(data) {
+    return __awaiter(this, void 0, void 0, function () {
+        var StantionSearch;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (data.length != 13) {
+                        return [2 /*return*/, {
+                                status_add: "failed",
+                                codeFailed: 13
+                            }];
+                    }
+                    if ((isNaN(Number(data[0]))) ||
+                        (isNaN(Number(data[1]))) ||
+                        (isNaN(Number(data[10]))) ||
+                        (isNaN(Number(data[11]))) ||
+                        (isNaN(Number(data[12])))) {
+                        return [2 /*return*/, {
+                                status_add: "failed",
+                                codeFailed: 1101112
+                            }];
+                    }
+                    return [4 /*yield*/, Stantions_1.stantionModel.findOne({
+                            $or: [{ id: data[1] }, { fid: data[0] }]
+                        })];
+                case 1:
+                    StantionSearch = _a.sent();
+                    if ((StantionSearch)) {
+                        return [2 /*return*/, {
+                                status_add: "failed",
+                                codeFailed: 9669
+                            }];
+                    }
+                    return [2 /*return*/, {
+                            status_add: "success"
+                        }];
+            }
+        });
+    });
+}
+function saveFromDatabaseError(data) {
+    return __awaiter(this, void 0, void 0, function () {
+        var errorToSave, e_4;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    errorToSave = new ErrorLoad_1.errorModel(data);
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, errorToSave.save()];
+                case 2:
+                    _a.sent();
+                    return [3 /*break*/, 4];
+                case 3:
+                    e_4 = _a.sent();
+                    console.log(e_4);
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}

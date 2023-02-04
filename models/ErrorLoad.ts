@@ -10,10 +10,10 @@ const ErrorShema = new Shema({
         required:true
     },
     error:{
-        type:String,
+        type:Number,
         required:true
     },
-    fileload:{
+    fileLoad:{
         type:String,
         required:true
     }

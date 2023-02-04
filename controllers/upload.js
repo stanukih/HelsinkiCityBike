@@ -43,6 +43,7 @@ var lineReader = require("line-reader");
 var ErrorLoad_1 = require("../models/ErrorLoad");
 function saveBaseStantions(csv, index, fileLoad) {
     var _a, _b, _c;
+    if (fileLoad === void 0) { fileLoad = ' '; }
     return __awaiter(this, void 0, void 0, function () {
         var temp_data, data, i, temp_data2, j, errorLoad, errorLoad, StantionSearch, Stantion;
         return __generator(this, function (_d) {
@@ -127,7 +128,7 @@ function saveBaseStantions(csv, index, fileLoad) {
                             kapasiteet: data[10],
                             positionX: data[11],
                             positionY: data[12],
-                            fileLoad: fileLoad
+                            fileLoad: fileLoad !== null && fileLoad !== void 0 ? fileLoad : ''
                         });
                         Stantion.save();
                     }
@@ -238,18 +239,27 @@ function saveBaseTravel(csv, index, fileLoad) {
 }
 function uploadStantions(req, res) {
     return __awaiter(this, void 0, void 0, function () {
-        var index;
+        var index, filename;
         return __generator(this, function (_a) {
+            console.log(req);
             if (!(req.file)) {
                 res.status(409).json({
-                    message: "File upload error. The file must be less than 300 megabytes and have *.csv extension"
+                    message: "File upload error"
                 });
                 return [2 /*return*/];
             }
+            res.status(200).json({
+                status_add: "success",
+                message: "File received. Its processing"
+            });
             index = 0;
+            filename = req.file.path;
+            console.log("req.file.path", filename);
             lineReader.eachLine("./".concat(req.file.path), function (line) {
                 try {
-                    saveBaseStantions(line, index, req.file.path);
+                    console.log("line", line);
+                    console.log("index", index);
+                    saveBaseStantions(line, index, filename);
                 }
                 catch (e) {
                     res.status(409).json({
@@ -257,9 +267,6 @@ function uploadStantions(req, res) {
                     });
                 }
                 index++;
-            });
-            res.status(200).json({
-                message: "Data load"
             });
             return [2 /*return*/];
         });

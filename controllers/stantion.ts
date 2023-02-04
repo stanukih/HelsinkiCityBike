@@ -3,7 +3,10 @@
 import { stantionModel } from "../models/Stantions";
 import { travelModel } from "../models/Travel";
 import { errorModel } from '../models/ErrorLoad';
+import { stantionFieldsAllExistOrNot, stantionFieldsImport, stantionFieldsImportPack, typeImportPack, statusAll, ErrorSaveIntarface } from "../interfaces/stantion";
 import jwt = require('jsonwebtoken')
+import lineReader = require('line-reader');
+import { pathToFileURL } from "url";
 
 function filterNotCorrect(FilterString:string):boolean{
     if (FilterString.match(`[^A-Z0-9\_]`)){
@@ -89,11 +92,11 @@ function fieldFromNumber(fieldsNumber:string){
     }
 }
 
-function parseFields(FieldsString:string):allFields{    
+function parseFields(FieldsString:string):stantionFieldsAllExistOrNot{    
     if (FieldsString.length===0){
         return {"_id":0, "fileLoad":0, "__v":0}
     }
-    let fields = {
+    let fields:stantionFieldsAllExistOrNot = {
         "_id":0, 
         "fileLoad":0, 
         "__v":0,
@@ -125,7 +128,7 @@ async function receiving_stations (req,res){
         let size:number=100
         let sort:string="_id"
         let filter:JSON=JSON.parse("{}")
-        let fields:allFields={}
+        let fields:stantionFieldsAllExistOrNot={}
         
         if (req.query.page!=''){
             page=req.query.page
@@ -139,8 +142,7 @@ async function receiving_stations (req,res){
         if (req.query.filter!=''){            
             filter=JSON.parse(parseFilter(req.query.filter))
         }
-        if (req.query.fields!=''){        
-            console.log(parseFields(req.query.fields))    
+        if (req.query.fields!=''){           
             fields=parseFields(req.query.fields)
         }
         
@@ -186,91 +188,212 @@ async function receiving_stations_quantity (req,res){
     }
 }
 
-//interface 
-
-async function saveBaseStantions(req,res) {
+function validationOfFields(req): statusAll {
     if (
-    (!(req.body.fid))||(isNaN(Number(req.body.fid)))||
-    (!(req.body.id))||(isNaN(Number(req.body.id)))||
-    (!(req.body.nimi))||((req.body.nimi===""))||
-    (!(req.body.namn))||((req.body.namn===""))||
-    (!(req.body.name))||((req.body.name===""))||
-    (!(req.body.osoite))||((req.body.osoite===""))||
-    (!(req.body.adress))||((req.body.adress===""))||
-    (!(req.body.kapasiteet))||(isNaN(Number(req.body.kapasiteet)))||
-    (!(req.body.positionX))||(isNaN(Number(req.body.positionX)))||
-    (!(req.body.positionY))||(isNaN(Number(req.body.positionY))))
-    {
+        (!(req.body.fid)) || (isNaN(Number(req.body.fid))) ||
+        (!(req.body.id)) || (isNaN(Number(req.body.id))) ||
+        (!(req.body.nimi)) || ((req.body.nimi === "")) ||
+        (!(req.body.namn)) || ((req.body.namn === "")) ||
+        (!(req.body.name)) || ((req.body.name === "")) ||
+        (!(req.body.osoite)) || ((req.body.osoite === "")) ||
+        (!(req.body.adress)) || ((req.body.adress === "")) ||
+        (!(req.body.kapasiteet)) || (isNaN(Number(req.body.kapasiteet))) ||
+        (!(req.body.positionX)) || (isNaN(Number(req.body.positionX))) ||
+        (!(req.body.positionY)) || (isNaN(Number(req.body.positionY)))) {
+        return {
+            status_add: "failed",
+            codeFailed: 1015,
+            message: "Not all required fields are present in the request"
+        }
+
+    }
+    else return { status_add: "success", }
+}
+
+async function saveBaseStantions(req, res) {
+    const resultvalidationOfFields = validationOfFields(req)
+    if (resultvalidationOfFields.status_add==="failed"){
         res.status(400).json({
-            status_add:"failed",
-            codeFailed:1015,
-            message:"Not all required fields are present in the request"
+            status_add: resultvalidationOfFields.status_add,
+            codeFailed: resultvalidationOfFields.codeFailed,
+            message: resultvalidationOfFields.message
         })
         return
     }
-    const dataStantionount=await stantionModel.findOne({$or:[{fid:req.body.fid},{id:req.body.id}]})
-    
-    if (dataStantionount){
+    const dataStantionount = await stantionModel.findOne({ $or: [{ fid: req.body.fid }, { id: req.body.id }] })
+    if (dataStantionount) {
         res.status(400).json({
-            status_add:"failed",
-            codeFailed:1020,
-            message:"Record creation error. Record conflict",
-            record:dataStantionount
+            status_add: "failed",
+            codeFailed: 1020,
+            message: "Record creation error. Record conflict",
+            record: dataStantionount
         })
         return
     }
     else {
+        const result=await saveFromDatabase(req.body as stantionFieldsImport)
+        if (result.status_add === "success") {
+            res.status(200).json({
+                status_add: "success",
+            })
+        }
+        else {
+            res.status(400).json({
+                status_add: "failed",
+                codeFailed: result.codeFailed,
+                message: result.message,
+            })
+        }
+    }
+}
+
+async function saveFromDatabase(data: stantionFieldsImport | stantionFieldsImportPack): Promise<statusAll> {
+    let stantion = new stantionModel({
+        fid: data.fid,
+        id: data.id,
+        nimi: data.nimi,
+        namn: data.namn,
+        name: data.name,
+        osoite: data.osoite,
+        adress: data.adress,
+        kaupunki: data.kaupunki,
+        stad: data.stad,
+        operaattor: data.operaattor,
+        kapasiteet: data.kapasiteet,
+        positionX: data.positionX,
+        positionY: data.positionY,
+        user: data.user
+    })
+    if (typeImportPack(data)) {
+        stantion.fileLoad = data.fileLoad
+    }
     try {
-        console.log(req.body)
-    const stantion = new stantionModel({
-        fid:req.body.fid,
-        id:req.body.id,
-        nimi:req.body.nimi,
-        namn:req.body.namn,
-        name:req.body.name,
-        osoite:req.body.osoite,
-        adress:req.body.adress,
-        kaupunki:req.body.kaupunki?req.body.kaupunki:null,
-        stad:req.body.stad?req.body.stad:null,
-        operaattor:req.body.operaattor?req.body.operaattor:null,
-        kapasiteet:req.body.kapasiteet,
-        positionX:req.body.positionX,
-        positionY:req.body.positionY,
-        }) 
-        console.log("---------3")
         await stantion.save()
-        res.status(200).json({
-            status_add:"success",  
+        return { status_add: "success" }
+    }
+    catch (e) {
+        return {
+            status_add: "failed",
+            message: e as Error,
+        }
+    }
+}
+
+function saveBaseStantionsPack(req, res) {
+
+    if (!(req.file)) {
+        res.status(409).json({
+            status_add: "failed",
+            codeFailed: 1053,
+            message: "File not loaded",
         })
         return
     }
-    catch(e){
-        console.log(e)
-        res.status(400).json({
+    const filePath: string = req.file.path
+    res.status(200).json({
+        status_add: "success",
+        message: "File received. Its processing"
+    })
+
+    let index = 0
+
+    lineReader.eachLine(`./${filePath}`, async (line) => {
+        if (index > 0) {
+            const dataFromString: string[] = lineParce(line)
+            const statusDataFromString = await correctLine(dataFromString)
+            if (statusDataFromString.status_add === "success") {
+                const statusSave = await saveFromDatabase({
+                    fid: Number(dataFromString[0]),
+                    id: Number(dataFromString[1]),
+                    nimi: dataFromString[2],
+                    namn: dataFromString[3],
+                    name: dataFromString[4],
+                    osoite: dataFromString[5],
+                    adress: dataFromString[6],
+                    kaupunki: dataFromString[7],
+                    stad: dataFromString[8],
+                    operaattor: dataFromString[9],
+                    kapasiteet: Number(dataFromString[10]),
+                    positionX: Number(dataFromString[11]),
+                    positionY: Number(dataFromString[12]),
+                    fileLoad: filePath
+                })
+            }
+            else {
+                await saveFromDatabaseError({
+                    string_to_load: line,
+                    doctype: "Stantion",
+                    error: statusDataFromString.codeFailed,
+                    fileLoad: filePath
+                })
+            }
+
+        }
+        index++;
+    })
+}
+
+function lineParce(line: string): string[] {
+    const temp_data = line.split('"')
+    let data: string[] = []
+    for (let i = 0; i < temp_data.length; i++) {
+        if (i % 2 === 0) {
+            let temp_data2 = temp_data[i].split(',')
+            for (let j = 0; j < temp_data2.length; j++) {
+                if (temp_data2[j] != "") {
+                    data.push(temp_data2[j])
+                }
+            }
+        }
+        else {
+            data.push(temp_data[i])
+        }
+    }
+    return data
+}
+async function correctLine(data: string[]): Promise<statusAll> {
+    if (data.length != 13) {
+        return{
             status_add:"failed",
-            codeFailed:1100,
-            message:"Record creation error.",
-        })
-    }}
+            codeFailed:13            
+        }       
+    }
+    if (
+        (isNaN(Number(data[0]))) ||
+        (isNaN(Number(data[1]))) ||
+        (isNaN(Number(data[10]))) ||
+        (isNaN(Number(data[11]))) ||
+        (isNaN(Number(data[12])))
+    ) {
+        return{
+            status_add:"failed",
+            codeFailed:1101112            
+        }    
+    }        
+    const StantionSearch = await stantionModel.findOne({
+        $or:[{id:data[1]},{fid: data[0]}]
+    })
+    if ((StantionSearch)){
+        return     {
+            status_add:"failed",
+            codeFailed:9669            
+        }       
+    }
+    return {
+        status_add:"success"
+    }
+}
+async function saveFromDatabaseError(data: ErrorSaveIntarface){
+    let errorToSave = new errorModel(data)
+    try {
+        await errorToSave.save()        
+    }
+    catch (e) {
+        console.log(e)
+    }
 }
 
-interface allFields{
-    "_id"?:number, 
-    "fileLoad"?:number, 
-    "__v"?:number,
-    "fid"?: number,
-    "id"?: number,
-    "nimi"?: number,
-    "namn"?: number,
-    "name"?: number,
-    "osoite"?: number,
-    "adress"?: number,
-    "kaupunki"?: number,
-    "stad"?: number,
-    "operaattor"?: number,
-    "kapasiteet"?: number,
-    "positionX"?: number,
-    "positionY"?: number,    
-}
 
-export { receiving_stations, receiving_stations_quantity, saveBaseStantions};
+
+
+export { receiving_stations, receiving_stations_quantity, saveBaseStantions, saveBaseStantionsPack};

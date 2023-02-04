@@ -1,21 +1,17 @@
-    <button type="button" [matMenuTriggerFor]="Info">Info</button>
-    <mat-menu #Info>
-        <a href="stantion">            
-            <menu mat-menu-item>Stantions</menu>
-        </a>
-        <a href="travel">            
-            <menu mat-menu-item>Travels</menu>
-        </a>
-      </mat-menu>
+<button type="button" [matMenuTriggerFor]="View">View</button>
+<mat-menu #View>
+    <a href="stantion">
+        <menu mat-menu-item>Stantions</menu>
+    </a>
+    <a href="travel">
+        <menu mat-menu-item>Travels</menu>
+    </a>
+</mat-menu>
+<button type="button" [matMenuTriggerFor]="Change">Change</button>
+<mat-menu #Change>
+    <a href="import_data">
+        <menu mat-menu-item>Import data from package</menu>
+    </a>
+</mat-menu>
 
-      <button type="button" [matMenuTriggerFor]="Admin">Admin</button>
-    <mat-menu #Admin>
-        <a href="stantion">            
-            <menu mat-menu-item>Stantions</menu>
-        </a>
-        <a href="travel">            
-            <menu mat-menu-item>Travels</menu>
-        </a>
-      </mat-menu>
-  
-      <router-outlet></router-outlet>
+<router-outlet></router-outlet>

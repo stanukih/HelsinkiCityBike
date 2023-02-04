@@ -7,9 +7,10 @@ import { stantionModel } from "../models/Stantions";
 import { travelModel } from "../models/Travel";
 import lineReader = require('line-reader');
 import { errorModel } from '../models/ErrorLoad';
+import {upload} from "../middleware/upload"
 
 
-async function saveBaseStantions(csv: String, index: Number, fileLoad:String) {
+async function saveBaseStantions(csv: String, index: Number, fileLoad:String=' ') {
     if (index === 0) { return }
     const temp_data = csv.split('"')
     let data: String[] = []
@@ -93,7 +94,7 @@ async function saveBaseStantions(csv: String, index: Number, fileLoad:String) {
             kapasiteet: data[10],
             positionX: data[11],
             positionY: data[12],
-            fileLoad:fileLoad
+            fileLoad:fileLoad ?? ''
         })
         Stantion.save()
     }
@@ -206,17 +207,26 @@ async function saveBaseTravel(csv: String, index: number, fileLoad:string) {
 
 
 async function uploadStantions(req, res) {
+    console.log(req)
     if (!(req.file)){
         res.status(409).json({
-            message: "File upload error. The file must be less than 300 megabytes and have *.csv extension"
+            message: "File upload error"
         })
         return
     }
+    res.status(200).json({
+        status_add:"success",
+        message: "File received. Its processing"
+    })
     let index = 0
-
+    const filename=req.file.path
+    
+    console.log("req.file.path",filename)
     lineReader.eachLine(`./${req.file.path}`, function (line) {
         try {
-            saveBaseStantions(line, index, req.file.path);
+            console.log("line",line)
+            console.log("index",index)
+            saveBaseStantions(line, index, filename);
         } catch (e) {
             res.status(409).json({
                 message: "File filling error"
@@ -224,9 +234,7 @@ async function uploadStantions(req, res) {
         }
         index++;
     })
-    res.status(200).json({
-        message: "Data load"
-    })
+    
 }
 
 

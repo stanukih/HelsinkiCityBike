@@ -1,7 +1,9 @@
 <h1> Upload file </h1>
-    <label>Import stations from file</label>
-    <input type="file" class="file-upload" onchange="console.log(event.target.files)">
-    <br>
-    <br>
-    <label>Import travels from file</label>
-    <input type="file" class="file-upload" onchange="console.log(event.target.files)">
+<label>Import stations from file</label>
+<input type="file" class="file-upload" accept=".csv" (change)="importStantions($event)">
+<button (click)="sendStantions()">TEST Stantion</button>
+<br>
+<br>
+<label>Import travels from file</label>
+<input type="file" class="file-upload" accept=".csv" (change)="importTravels($event)">
+<button (click)="sendTravel()">TEST Travel</button>
